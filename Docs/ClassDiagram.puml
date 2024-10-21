@@ -1,0 +1,56 @@
+@startuml
+
+
+    class Main {
+    }
+
+package "Entities" {
+    class Cupcake {
+    }
+
+    class Topping {
+    }
+
+    class Bottom {
+    }
+
+    class User {
+    }
+
+    class Order {
+    }
+
+    class OrderLine {
+    }
+}
+Cupcake *-- Topping
+Cupcake *-- Bottom
+
+package "Persistence" {
+    class orderMapper {
+    }
+class userMapper {
+    }
+}
+Order *-- OrderLine
+Order o-- User
+OrderLine --* Cupcake
+
+package "Controllers" {
+    class UserController {
+    }
+
+    class OrderController {
+    }
+}
+Main -- UserController
+Main -- OrderController
+UserController -- userMapper
+OrderController -- orderMapper
+
+@enduml
+implements ..|>
+extends <|-- (is-a)
+composition *-- (must-have)
+Aggregation o-- (can-have)
+Associering <--
