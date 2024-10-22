@@ -6,21 +6,49 @@
 
 package "Entities" {
     class Cupcake {
+    - Map<Topping, float> toppings
+    - Map<Bottom, float> bottoms
+    + getters();
+    + getTotalPrice();
     }
 
     class Topping {
+    - String toppingName
+    - float toppingPrice
+    + getToppingName();
+    + getToppingPrice();
     }
 
     class Bottom {
+    - String bottomName
+    - float bottomPrice
+    + getBottomName();
+    + getBottomPrice();
     }
 
     class User {
+    - int userId
+    - String userName
+    - String password
+    - int balance
+    - string role
+    + getters();
+    }
+    class ProductLine {
+    - int orderLineId
+    - int quantity
+    - Cupcake cupcake
+    - float totalPrice
+    + getters();
     }
 
     class Order {
-    }
-
-    class OrderLine {
+    - int orderId
+    - User user
+    - List<ProductLine> productList
+    - float orderPrice
+    - boolean isPaid
+    + getters();
     }
 }
 Cupcake *-- Topping
@@ -28,19 +56,43 @@ Cupcake *-- Bottom
 
 package "Persistence" {
     class orderMapper {
+    + createOrder();
+    + getOrdersByUser();
+    + getAllOrders();
+    + getOrderById();
+    + updateOrder();
+    + deleteOrder();
     }
 class userMapper {
+    + login();
+    + createUser();
+    + getAllUsers();
     }
 }
-Order *-- OrderLine
-Order o-- User
-OrderLine --* Cupcake
+Order *-- ProductLine
+Order *-- User
+ProductLine *-- Cupcake
 
 package "Controllers" {
     class UserController {
+    + addRoutes();
+    + login();
+    + createUser();
+    + getAllUsers();
     }
 
     class OrderController {
+    + addRoutes();
+    + createOrder();
+    + getOrdersByUser();
+    + getAllOrders();
+    + getOrderById();
+    + updateOrder();
+    + deleteOrder();
+    }
+}
+package "Test" {
+    class Test {
     }
 }
 Main -- UserController
