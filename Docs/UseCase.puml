@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+!Pragma layout smetana
+actor User
+
+usecase "Create User" as UC1
+usecase "Login" as UC2
+usecase "Create Order" as UC3
+usecase "Add to basket" as UC4
+usecase "Basket" as UC5
+usecase "Pay" as UC6
+usecase "Edit Order" as UC8
+usecase "Delete Order" as UC9
+usecase "View Orders" as UC10
+usecase "View Costumers" as UC11
+usecase "View products" as UC12
+usecase "Logout" as UC13
+usecase "View All Orders" as UC14
+
+
+
+User --> UC1
+User --> UC2
+User --> UC12
+UC1 --> UC2
+UC2 --> UC12
+UC3 --> UC4
+UC4 --> UC12
+UC5 --> UC6
+UC5 --> UC8
+UC5 --> UC9
+
+
+User --> UC11 : "if admin"
+User --> UC14 : "if admin"
+UC12 --> UC3 : "if logged in"
+UC12 --> UC5 : "if logged in"
+UC12 --> UC10 : "if logged in"
+UC12 --> UC13 : "if logged in"
+UC12 --> UC2 : "if not logged in"
+UC2 --> UC1 : "if no login"
+@enduml
