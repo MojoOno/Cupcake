@@ -14,7 +14,8 @@ import java.util.List;
 public class OrderController {
 
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
-        app.get("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
+        app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
+        app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
