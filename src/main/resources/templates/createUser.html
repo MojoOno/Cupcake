@@ -21,23 +21,16 @@
 </div>
 
 <div class="mid-menu">
-
     <p class="text-center p-2 fs-2">Opret bruger:</p>
     <form method="post" action="/createuser">
         <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Brugernavn</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" name="username"
-                   placeholder="example@example.com">
+            <input type="text" class="form-control" name="username" placeholder="example@example.com">
         </div>
         <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">Adgangskode</label>
-            <input type="password" class="form-control" id="formGroupExampleInput2" name="password"
-                   placeholder="Adgangskode">
+            <input type="password" class="form-control" name="password1" placeholder="Adgangskode">
         </div>
         <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">Gentag adgangskode</label>
-            <input type="password" class="form-control" id="formGroupExampleInput3" name="password"
-                   placeholder="Gentag adgangskode">
+            <input type="password" class="form-control" name="password2" placeholder="Gentag adgangskode">
         </div>
         <div class="input-group mt-3 d-flex ms-auto justify-content-center">
             <button class="btn btn-success btn-outline-success text-light" style="width: 1000px; height: auto"
@@ -45,6 +38,7 @@
                     formaction="/createuser">Opret bruger
             </button>
         </div>
+        <div><p th:text="${message}"></p></div>
     </form>
 </div>
 
