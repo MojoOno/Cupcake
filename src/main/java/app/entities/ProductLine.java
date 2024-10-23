@@ -10,4 +10,15 @@ public class ProductLine {
         this.cupcake = cupcake;
     }
 
+    public Cupcake getCupcake() {
+        return cupcake;
+    }
+
+    public int getProductLineId() {
+        return productLineId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
 }
