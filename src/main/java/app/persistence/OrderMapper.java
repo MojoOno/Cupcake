@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.Main.connectionPool;
-
 
 public class OrderMapper {
 
@@ -38,7 +36,7 @@ public class OrderMapper {
     public static void getOrderById(int orderId) {
     }
 
-    public static List<ProductLine> getUserBasket(int userId) {
+    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLines = new ArrayList<>();
         String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
                 "FROM productline pl " +
