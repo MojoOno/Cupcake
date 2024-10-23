@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2 (Debian 16.2-1.pgdg120+2)
 -- Dumped by pg_dump version 16.1
 
--- Started on 2024-10-22 11:00:32 UTC
+-- Started on 2024-10-23 08:29:13 UTC
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,6 +17,25 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- TOC entry 4 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO pg_database_owner;
+
+--
+-- TOC entry 3404 (class 0 OID 0)
+-- Dependencies: 4
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
 
 SET default_tablespace = '';
 
@@ -53,7 +72,7 @@ CREATE SEQUENCE public.bottom_bottom_id_seq
 ALTER SEQUENCE public.bottom_bottom_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3399 (class 0 OID 0)
+-- TOC entry 3405 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: bottom_bottom_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -93,7 +112,7 @@ CREATE SEQUENCE public.order_order_id_seq
 ALTER SEQUENCE public.order_order_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3400 (class 0 OID 0)
+-- TOC entry 3406 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: order_order_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -135,7 +154,7 @@ CREATE SEQUENCE public.product_line_productline_id_seq
 ALTER SEQUENCE public.product_line_productline_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3401 (class 0 OID 0)
+-- TOC entry 3407 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: product_line_productline_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -174,7 +193,7 @@ CREATE SEQUENCE public.topping_topping_id_seq
 ALTER SEQUENCE public.topping_topping_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3402 (class 0 OID 0)
+-- TOC entry 3408 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: topping_topping_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -192,7 +211,7 @@ CREATE TABLE public.users (
                               user_name character varying NOT NULL,
                               user_password character varying NOT NULL,
                               balance numeric DEFAULT 0 NOT NULL,
-                              role character varying DEFAULT USER NOT NULL
+                              is_admin boolean DEFAULT false NOT NULL
 );
 
 
@@ -215,7 +234,7 @@ CREATE SEQUENCE public.user_user_id_seq
 ALTER SEQUENCE public.user_user_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3403 (class 0 OID 0)
+-- TOC entry 3409 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: user_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -224,7 +243,7 @@ ALTER SEQUENCE public.user_user_id_seq OWNED BY public.users.user_id;
 
 
 --
--- TOC entry 3226 (class 2604 OID 24648)
+-- TOC entry 3231 (class 2604 OID 24648)
 -- Name: bottom bottom_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -232,7 +251,7 @@ ALTER TABLE ONLY public.bottom ALTER COLUMN bottom_id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3221 (class 2604 OID 24619)
+-- TOC entry 3226 (class 2604 OID 24619)
 -- Name: orders order_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -240,7 +259,7 @@ ALTER TABLE ONLY public.orders ALTER COLUMN order_id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3223 (class 2604 OID 24629)
+-- TOC entry 3228 (class 2604 OID 24629)
 -- Name: productline productline_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -248,7 +267,7 @@ ALTER TABLE ONLY public.productline ALTER COLUMN productline_id SET DEFAULT next
 
 
 --
--- TOC entry 3225 (class 2604 OID 24639)
+-- TOC entry 3230 (class 2604 OID 24639)
 -- Name: topping topping_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -256,7 +275,7 @@ ALTER TABLE ONLY public.topping ALTER COLUMN topping_id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 3218 (class 2604 OID 24608)
+-- TOC entry 3223 (class 2604 OID 24608)
 -- Name: users user_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -264,7 +283,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.u
 
 
 --
--- TOC entry 3393 (class 0 OID 24645)
+-- TOC entry 3398 (class 0 OID 24645)
 -- Dependencies: 224
 -- Data for Name: bottom; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -277,7 +296,7 @@ INSERT INTO public.bottom VALUES (5, 'Almond', 7.00);
 
 
 --
--- TOC entry 3387 (class 0 OID 24616)
+-- TOC entry 3392 (class 0 OID 24616)
 -- Dependencies: 218
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -285,7 +304,7 @@ INSERT INTO public.bottom VALUES (5, 'Almond', 7.00);
 
 
 --
--- TOC entry 3389 (class 0 OID 24626)
+-- TOC entry 3394 (class 0 OID 24626)
 -- Dependencies: 220
 -- Data for Name: productline; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -293,7 +312,7 @@ INSERT INTO public.bottom VALUES (5, 'Almond', 7.00);
 
 
 --
--- TOC entry 3391 (class 0 OID 24636)
+-- TOC entry 3396 (class 0 OID 24636)
 -- Dependencies: 222
 -- Data for Name: topping; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -310,15 +329,16 @@ INSERT INTO public.topping VALUES (9, 'Blue cheese', 9.00);
 
 
 --
--- TOC entry 3385 (class 0 OID 24605)
+-- TOC entry 3390 (class 0 OID 24605)
 -- Dependencies: 216
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.users VALUES (1, 'admin@admin.admin', '1234', 50000, true);
 
 
 --
--- TOC entry 3404 (class 0 OID 0)
+-- TOC entry 3410 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: bottom_bottom_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -327,7 +347,7 @@ SELECT pg_catalog.setval('public.bottom_bottom_id_seq', 5, true);
 
 
 --
--- TOC entry 3405 (class 0 OID 0)
+-- TOC entry 3411 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: order_order_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -336,7 +356,7 @@ SELECT pg_catalog.setval('public.order_order_id_seq', 1, false);
 
 
 --
--- TOC entry 3406 (class 0 OID 0)
+-- TOC entry 3412 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: product_line_productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -345,7 +365,7 @@ SELECT pg_catalog.setval('public.product_line_productline_id_seq', 1, false);
 
 
 --
--- TOC entry 3407 (class 0 OID 0)
+-- TOC entry 3413 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: topping_topping_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -354,16 +374,16 @@ SELECT pg_catalog.setval('public.topping_topping_id_seq', 9, true);
 
 
 --
--- TOC entry 3408 (class 0 OID 0)
+-- TOC entry 3414 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_user_id_seq', 1, false);
+SELECT pg_catalog.setval('public.user_user_id_seq', 1, true);
 
 
 --
--- TOC entry 3236 (class 2606 OID 24652)
+-- TOC entry 3241 (class 2606 OID 24652)
 -- Name: bottom bottom_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -372,7 +392,7 @@ ALTER TABLE ONLY public.bottom
 
 
 --
--- TOC entry 3230 (class 2606 OID 24624)
+-- TOC entry 3235 (class 2606 OID 24624)
 -- Name: orders order_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -381,7 +401,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 3232 (class 2606 OID 24634)
+-- TOC entry 3237 (class 2606 OID 24634)
 -- Name: productline product_line_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -390,7 +410,7 @@ ALTER TABLE ONLY public.productline
 
 
 --
--- TOC entry 3234 (class 2606 OID 24643)
+-- TOC entry 3239 (class 2606 OID 24643)
 -- Name: topping topping_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -399,7 +419,7 @@ ALTER TABLE ONLY public.topping
 
 
 --
--- TOC entry 3228 (class 2606 OID 24614)
+-- TOC entry 3233 (class 2606 OID 24614)
 -- Name: users user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -408,7 +428,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3237 (class 2606 OID 24658)
+-- TOC entry 3242 (class 2606 OID 24658)
 -- Name: orders orders_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -417,7 +437,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 3238 (class 2606 OID 24668)
+-- TOC entry 3243 (class 2606 OID 24668)
 -- Name: productline productline_bottom_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -426,7 +446,7 @@ ALTER TABLE ONLY public.productline
 
 
 --
--- TOC entry 3239 (class 2606 OID 24673)
+-- TOC entry 3244 (class 2606 OID 24673)
 -- Name: productline productline_order_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -435,7 +455,7 @@ ALTER TABLE ONLY public.productline
 
 
 --
--- TOC entry 3240 (class 2606 OID 24663)
+-- TOC entry 3245 (class 2606 OID 24663)
 -- Name: productline productline_topping_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -443,7 +463,7 @@ ALTER TABLE ONLY public.productline
     ADD CONSTRAINT productline_topping_id_fkey FOREIGN KEY (topping_id) REFERENCES public.topping(topping_id) NOT VALID;
 
 
--- Completed on 2024-10-22 11:00:33 UTC
+-- Completed on 2024-10-23 08:29:14 UTC
 
 --
 -- PostgreSQL database dump complete

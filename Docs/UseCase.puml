@@ -29,6 +29,8 @@ UC4 --> UC12
 UC5 --> UC6
 UC5 --> UC8
 UC5 --> UC9
+UC5 --> UC12
+UC10 --> UC12
 
 
 User --> UC11 : "if admin"
