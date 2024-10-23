@@ -1,7 +1,15 @@
-header {
-    display: flex;
-    justify-content: center; /* Center the logo horizontally */
-    align-items: center; /* Center the logo vertically if needed */
+body {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 1200px) 1fr;
+    margin: 0;
+    padding: 0;
+}
+
+header, .topmenu, .mid-menu {
+    grid-column: 2;
+    width: 100%;
+    max-width: 1200px; /* Set a max-width for the elements */
+    margin: 0 auto; /* Center the elements within their container */
 }
 
 header img {
@@ -10,14 +18,13 @@ header img {
     background-color: mediumpurple;
 }
 
-/******** Style the navigation bar *********/
+/* Additional styles for .topmenu and .mid-menu */
 .topmenu {
     background-color: #f0f0f0; /* Light grey background */
     overflow: hidden; /* Prevents items from flowing outside the container */
     font-size: 14px; /* Small text size */
 }
 
-/* Style the links inside the navigation bar */
 .topmenu a {
     float: left; /* Align links to the left */
     display: block; /* Display links as block elements */
@@ -36,66 +43,59 @@ header img {
     text-decoration: none; /* Remove underline */
 }
 
-/* Add a hover effect to the links */
 .topmenu a:hover {
     background-color: #ddd; /* Light grey background on hover */
     color: black; /* Text color on hover */
 }
 
-/* Add a style for the active/current link */
 .topmenu a.active {
     background-color: #4CAF50; /* Active link background */
     color: white; /* Active link text color */
 }
 
-/* Style the basket (Kurv) to float to the right */
 .topmenu a[href="#basket"] {
     float: right; /* Move the basket to the far right */
     color: #090505;
 }
 
-/* Clearfix for floating elements */
 .topmenu::after {
     content: "";
     clear: both;
     display: table;
 }
 
-/******** Styling the mid menu ***********/
 .mid-menu {
     background-color: #f0f0f0;
-    width: 100%;
     padding: 0 5px 0 5px;
-
-    h1 {
-        padding-top: 20px;
-    }
-
-    .dropdown {
-        display: flex;
-        justify-content: space-between;
-        padding: 0 40px 0 0
-    }
-
-    .kurv {
-        padding: 0 40px 20px 0;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    button[type=submit] {
-        width: 20%;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
 }
 
-/******** Basket Page styles ***********/
+.mid-menu h1 {
+    padding-top: 20px;
+}
+
+.mid-menu .dropdown {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px 0 0;
+}
+
+.mid-menu .kurv {
+    padding: 0 40px 20px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mid-menu button[type=submit] {
+    width: 20%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .delete-btn {
     background-color: #e74c3c;
     color: white;
@@ -104,9 +104,11 @@ header img {
     border-radius: 5px;
     cursor: pointer;
 }
+
 .delete-btn:hover {
     background-color: #c0392b;
 }
+
 .update-btn {
     background-color: #e39d08;
     color: white;
@@ -115,11 +117,19 @@ header img {
     border-radius: 5px;
     cursor: pointer;
 }
+
 .update-btn:hover {
     background-color: #b47509;
 }
+
 .total-price-container {
     text-align: right;
     margin-right: 50px;
     margin-bottom: 10px;
+}
+
+.mb-3 {
+    width: 400px;
+    margin-right: auto;
+    margin-left: auto;
 }
