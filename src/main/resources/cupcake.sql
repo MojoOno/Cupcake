@@ -23,7 +23,7 @@ SET row_security = off;
 -- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
 --
 
-CREATE SCHEMA public;
+CREATE SCHEMA IF NOT exists public;
 
 
 ALTER SCHEMA public OWNER TO pg_database_owner;
