@@ -3,8 +3,8 @@ package app.entities;
 import java.util.Map;
 
 public class Cupcake {
-    Bottom bottom;
-    Topping topping;
+        private Bottom bottom;
+        private Topping topping;
 
     public Cupcake(Bottom bottom, Topping topping) {
         this.bottom = bottom;

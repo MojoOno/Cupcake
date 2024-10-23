@@ -6,8 +6,8 @@
 
 package "Entities" {
     class Cupcake {
-    - Map<Topping, float> toppings
-    - Map<Bottom, float> bottoms
+    - Bottom bottom
+    - Topping topping
     + getters();
     + getTotalPrice();
     }
