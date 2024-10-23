@@ -89,3 +89,31 @@ header img {
     }
 }
 
+/******** Basket Page styles ***********/
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+.update-btn {
+    background-color: #e39d08;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.update-btn:hover {
+    background-color: #b47509;
+}
+.total-price-container {
+    text-align: right;
+    margin-right: 50px;
+    margin-bottom: 10px;
+}
