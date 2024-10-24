@@ -77,5 +77,11 @@ public class OrderController {
 
 
     }
+    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
+        return OrderMapper.getAllBottoms(connectionPool);
+    }
+    public static List<Topping> getAllToppings(ConnectionPool connectionPool) throws DatabaseException {
+        return OrderMapper.getAllToppings(connectionPool);
+    }
 }
 
