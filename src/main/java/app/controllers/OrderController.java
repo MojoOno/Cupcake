@@ -1,5 +1,7 @@
 package app.controllers;
 
+import app.entities.Order;
+import app.entities.User;
 import app.persistence.OrderMapper;
 import app.entities.ProductLine;
 import app.exceptions.DatabaseException;
@@ -46,7 +48,23 @@ public class OrderController {
     public static void getOrdersByUser() {
     }
 
-    public static void getAllOrders() {
+    public static void getAllOrders(Context ctx, ConnectionPool connectionPool) {
+        if (UserController.isUserAdmin(ctx, connectionPool)) {
+            try {
+                List<Order> orderList = OrderMapper.getAllOrders(connectionPool);
+                ctx.attribute("orders", orderList);
+                ctx.render("allorderspage.html");
+            } catch (DatabaseException e) {
+                ctx.attribute("message", "Something went wrong, Try again");
+                ctx.render("index.html");
+            }
+        }else {
+            ctx.attribute("message", "You are not authorized to view this page");
+            ctx.render("index.html");
+        }
+
+
+
     }
 
     public static void getOrderById() {
