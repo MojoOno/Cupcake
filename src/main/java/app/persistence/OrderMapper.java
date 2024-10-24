@@ -19,16 +19,38 @@ public class OrderMapper
     {
     }
 
-    public static void deleteOrder(int orderId)
-    {
+    public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "DELETE FROM orders WHERE order_id = ?";
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error deleting order", e.getMessage());
+        }
     }
 
-    public static void updateOrder(int orderId, int orderTotal)
-    {
+    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
     }
 
-    public static void getOrdersByUser(int userId)
-    {
+    public static List<Order> getOrdersByUserId(int userId, ConnectionPool connectionPool) throws DatabaseException {
+        List<Order> orderList = new ArrayList<>();
+        String sql = "SELECT * FROM orders WHERE user_id = ?";
+
+        try (
+                Connection connection = connectionPool.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getDouble("order_total"));
+                orderList.add(order);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
+        }
+        return orderList;
     }
 
     public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException
