@@ -17,4 +17,8 @@ public class Topping {
     public float getToppingPrice() {
         return toppingPrice;
     }
+
+    public String getBottomName() {
+        return bottomName;
+    }
 }

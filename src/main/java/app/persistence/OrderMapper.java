@@ -64,4 +64,18 @@ public class OrderMapper {
 
         return productLines;
     }
+    public static void addProductLineToBasket(int orderId, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, productLine.getCupcake().getBottom().getBottomId());
+            ps.setInt(3, productLine.getCupcake().getTopping().getToppingId());
+            ps.setInt(4, productLine.getQuantity());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
 }

@@ -21,4 +21,8 @@ public class ProductLine {
     public int getQuantity() {
         return quantity;
     }
+
+    public float getTotalPrice() {
+        return cupcake.getPrice() * quantity;
+    }
 }

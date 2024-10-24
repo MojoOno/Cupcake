@@ -17,4 +17,8 @@ public class Bottom {
     public float getBottomPrice() {
         return bottomPrice;
     }
+
+    public int getBottomId() {
+        return bottomId;
+    }
 }
