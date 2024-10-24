@@ -5,13 +5,14 @@ public class User {
     String username;
     String password;
     float balance;
-    String role;
+    boolean isAdmin = false;
 
-    public User(String username, String password, float balance, String role) {
+    public User(int userId, String username, String password, float balance, boolean isAdmin) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.balance = balance;
-        this.role = role;
+        this.isAdmin = isAdmin;
     }
 
     public String getUsername() {
@@ -22,15 +23,9 @@ public class User {
         return userId;
     }
 
-    public String getRole() {
-        return role;
-    }
+    public boolean isAdmin() { return isAdmin; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password;}
 
-    public float getBalance() {
-        return balance;
-    }
+    public float getBalance() { return balance;}
 }
