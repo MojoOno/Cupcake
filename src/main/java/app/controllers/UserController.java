@@ -46,17 +46,12 @@ public class UserController {
         User currentUser = ctx.sessionAttribute("currentUser");
         if (currentUser != null) {
             try {
-                boolean isAdmin = UserMapper.isUserAdmin(currentUser.getUserId(), connectionPool);
-                if (isAdmin) {
-                    ctx.result("User is admin");
-                } else {
-                    ctx.result("User is not admin");
-                }
+                return UserMapper.isUserAdmin(currentUser.getUserId(), connectionPool);
             } catch (DatabaseException e) {
                 ctx.result("Error checking admin status " + e.getMessage());
             }
-        }else {
-            ctx.result("User is not logged in");
+        } else {
+            ctx.result("User not logged in");
         }
         return false;
     }
