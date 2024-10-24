@@ -1,17 +1,18 @@
 package app.entities;
 
 public class User {
-    int userId;
-    String username;
-    String password;
-    float balance;
-    String role;
+   private int userId;
+    private String username;
+    private String password;
+    private float balance;
+    private boolean isAdmin;
 
-    public User(String username, String password, float balance, String role) {
+    public User(int userId, String username, String password, float balance, boolean isAdmin) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.balance = balance;
-        this.role = role;
+        this.isAdmin = isAdmin;
     }
 
     public String getUsername() {
@@ -22,12 +23,12 @@ public class User {
         return userId;
     }
 
-    public String getRole() {
-        return role;
-    }
-
     public String getPassword() {
         return password;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     public float getBalance() {
