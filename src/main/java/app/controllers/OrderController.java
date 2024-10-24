@@ -18,6 +18,7 @@ public class OrderController {
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
+        app.post("/orders", ctx -> setOrderStatus(ctx, connectionPool));
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
@@ -68,6 +69,19 @@ public class OrderController {
     }
 
     public static void getOrderById() {
+    }
+
+    public static void setOrderStatus(Context ctx, ConnectionPool connectionPool) {
+        int orderId = Integer.parseInt(ctx.formParam("orderId"));
+        String status = ctx.formParam("status");
+        try {
+            OrderMapper.setOrderStatus(orderId, connectionPool);
+            ctx.attribute("message", "Order status updated");
+            ctx.render("allorderspage.html");
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, Try again");
+            ctx.render("allorderspage.html");
+        }
     }
 }
 
