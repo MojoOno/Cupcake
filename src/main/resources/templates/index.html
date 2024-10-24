@@ -29,11 +29,10 @@
         Kurv
     </a>
 </div>
-
 <div class="mid-menu">
     <h1>Velkommen ombord</h1>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
-
+    <form method="post" action="/addtocart">
     <!-- Container til dropdowns og antal valg, placeret på samme linje -->
     <div class="valg-container">
         <!-- Dropdown til valg af bund -->
@@ -85,7 +84,6 @@
     </div>
 
     <div class="kurv" style="margin-top: 20px;">
-
     <div class="kurv" th:if="${session.currentUser != null}">
         <button type="submit">Læg i kurv</button>
     </div>
@@ -99,7 +97,8 @@
     </div>
 
 </div>
-
+    </form>
+</div>
 <!-- CSS til at placere dropdowns og antal valg på linje -->
 <style>
     .valg-container {
