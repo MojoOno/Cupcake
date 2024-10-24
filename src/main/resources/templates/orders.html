@@ -24,6 +24,7 @@
 
 <div class="mid-menu">
     <h1>Orders:</h1>
+
     <form method="get">
         <table class="table table-sm border border-dark table-borderless table-striped" style="width: max(50vw)">
             <thead class="table-primary">
@@ -37,21 +38,23 @@
             <tbody class="table-group-divider">
             <tr th:each="order: ${orderList}">
                 <td th:text="${order.order_id}"></td>
-                <td th:text="${order.user_id}"></td>
+                <td th:text="${order.user_id}" th:if="${isAdmin}"></td>
                 <td th:text="${order.paid_status}"></td>
-                <td>
-                    <button type="submit" class="btn btn-primary btn-sm" name="order_id" th:value="${order.order_id}"
-                            formaction="updateOrder">Update
-                    </button>
-                    <button type="submit" class="btn btn-primary btn-sm" name="order_id" th:value="${order.order_id}"
-                            formaction="deleteOrder">Delete
-                    </button>
+                <td th:if="${isAdmin}">
+                    <form method="post" th:action="@{/updateOrder}">
+                        <input type="hidden" name="order_id" th:value="${order.order_id}"/>
+                        <input type="text" name="new_status" placeholder="New Status"/>
+                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </form>
+                    <form method="post" th:action="@{/deleteOrder}">
+                        <input type="hidden" name="order_id" th:value="${order.order_id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
         </table>
     </form>
-
     <div><p th:text="${#ctx.message}"></p></div>
 
 
