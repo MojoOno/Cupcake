@@ -49,12 +49,20 @@
         </select>
 
     </div>
-    <div class="kurv">
+
+    <div class="kurv" th:if="${session.currentUser != null}">
         <button type="submit">Læg i kurv</button>
     </div>
 
-</div>
 
+    <div class="mt-4" th:if="${session.currentUser == null}">
+        <a href="/login" th:href="@{/login.html}" class="btn btn-success"
+           style="width: max(35vw)">
+            Login
+        </a>
+    </div>
+
+</div>
 
 </body>
 </html>

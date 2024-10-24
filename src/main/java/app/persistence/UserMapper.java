@@ -1,5 +1,6 @@
 package app.persistence;
 
+import app.entities.User;
 import app.exceptions.DatabaseException;
 
 import java.sql.Connection;
@@ -42,7 +43,29 @@ public class UserMapper {
     public static void getAllUsers() {
     }
 
-    public static void login(String username, String password) {
+    public static User login(String username, String password, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "select * from users where user_name =? and user_password =?";
+
+        try(
+                Connection connection = connectionPool.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+                )
+        {
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                int userId = rs.getInt("user_id");
+                float balance = rs.getFloat("balance");
+                boolean isAdmin = rs.getBoolean("is_admin");
+                return new User(userId,username,password,balance,isAdmin);
+            } else {
+                throw new DatabaseException("Fejl i login. Prøv igen.");
+            }
+        } catch (SQLException e){
+            throw new DatabaseException("DB fejl", e.getMessage());
+        }
     }
 
     public static boolean isUserAdmin(int userId, ConnectionPool connectionPool) throws DatabaseException {
@@ -67,3 +90,5 @@ public class UserMapper {
         }
     }
 
+
+}
