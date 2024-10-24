@@ -20,48 +20,43 @@ header img {
 
 /* Additional styles for .topmenu and .mid-menu */
 .topmenu {
-    background-color: #f0f0f0; /* Light grey background */
-    overflow: hidden; /* Prevents items from flowing outside the container */
+    background-color: #f0f0f0; /* Lys grå baggrund */
+    overflow: hidden;
     font-size: 14px; /* Small text size */
+    display: flex;
+    justify-content: space-between; /* Links til venstre, kurv til højre */
+    align-items: center;
+    padding: 0 20px; /* Lidt indvendig afstand */
 }
 
 .topmenu a {
-    float: left; /* Align links to the left */
-    display: block; /* Display links as block elements */
-    color: #666; /* Slightly grey text color */
-    text-align: center; /* Center text in each link */
-    padding: 14px 20px; /* Padding for each link */
-    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    padding: 14px 20px; /* Afstand omkring links */
+    text-decoration: none;
+    color: #666; /* Let grå tekstfarve */
+    text-align: center;
 }
 
-.topmenu span {
-    float: left; /* Align links to the left */
-    display: block; /* Display links as block elements */
-    color: #666; /* Slightly grey text color */
-    text-align: right; /* Center text in each link */
-    padding: 14px 20px; /* Padding for each link */
-    text-decoration: none; /* Remove underline */
+.topmenu .kurv {
+    margin-left: auto; /* Sørger for at kurven kommer helt til højre */
+    color: #090505;
+    display: flex;
+    align-items: center; /* Justerer ikon og tekst vertikalt */
+}
+
+.topmenu .kurv i {
+    font-size: 24px; /* Størrelsen på kurv-ikonet */
+    margin-right: 8px; /* Afstand mellem ikon og tekst */
 }
 
 .topmenu a:hover {
-    background-color: #ddd; /* Light grey background on hover */
-    color: black; /* Text color on hover */
+    background-color: #ddd; /* Lys grå baggrund på hover */
+    color: black; /* Tekstfarve på hover */
 }
 
 .topmenu a.active {
-    background-color: #4CAF50; /* Active link background */
-    color: white; /* Active link text color */
-}
-
-.topmenu a[href="#basket"] {
-    float: right; /* Move the basket to the far right */
-    color: #090505;
-}
-
-.topmenu::after {
-    content: "";
-    clear: both;
-    display: table;
+    background-color: #4CAF50; /* Aktivt link baggrundsfarve */
+    color: white; /* Aktivt link tekstfarve */
 }
 
 .mid-menu {
@@ -75,8 +70,8 @@ header img {
 
 .mid-menu .dropdown {
     display: flex;
-    justify-content: space-between;
-    padding: 0 40px 0 0;
+    justify-content: flex-start;
+    gap: 150px;
 }
 
 .mid-menu .kurv {
