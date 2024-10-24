@@ -5,6 +5,13 @@ public class Bottom {
     private int bottomId;
     float bottomPrice;
 
+    public Bottom(int bottomId,String bottomName, float bottomPrice) {
+        this.bottomId = bottomId;
+        this.bottomPrice = bottomPrice;
+        this.bottomName = bottomName;
+
+    }
+
     public Bottom(int bottomId, float bottomPrice) {
         this.bottomId = bottomId;
         this.bottomPrice = bottomPrice;
@@ -21,4 +28,5 @@ public class Bottom {
     public int getBottomId() {
         return bottomId;
     }
+
 }

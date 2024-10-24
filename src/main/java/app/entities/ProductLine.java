@@ -5,6 +5,12 @@ public class ProductLine {
     private int quantity;
     private Cupcake cupcake;
 
+    public ProductLine(int productLineId, Cupcake cupcake, int quantity) {
+        this.productLineId = productLineId;
+        this.cupcake = cupcake;
+        this.quantity = quantity;
+    }
+
     public ProductLine(int productLineId, Cupcake cupcake) {
         this.productLineId = productLineId;
         this.cupcake = cupcake;

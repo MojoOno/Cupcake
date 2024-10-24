@@ -1,5 +1,8 @@
 package app.controllers;
 
+import app.entities.Bottom;
+import app.entities.Cupcake;
+import app.entities.Topping;
 import app.persistence.OrderMapper;
 import app.entities.ProductLine;
 import app.exceptions.DatabaseException;
@@ -51,6 +54,28 @@ public class OrderController {
     }
 
     public static void getOrderById() {
+    }
+    public static void addToBasket(Context ctx, ConnectionPool connectionPool){
+
+        int userId = ctx.sessionAttribute("currentUser");
+        int bottomID = Integer.parseInt(ctx.formParam("bottomId"));
+        int toppingId = Integer.parseInt(ctx.formParam("toppingId"));
+        int quantityId = Integer.parseInt(ctx.formParam("quantityId"));
+
+        try {
+            Bottom bottom = OrderMapper.getBottomById(bottomID, connectionPool);
+            Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
+            Cupcake cupcake = new Cupcake(bottom, topping);
+            ProductLine productLine = new ProductLine(0,cupcake,quantity);
+            OrderMapper.addProductLineToBasket(userId,productLine,connectionPool);
+            ctx.redirect("/basketpage");
+
+        } catch (DatabaseException e){
+            ctx.attribute("message","Failed to add to cart, try again");
+            ctx.render("index.html");
+        }
+
+
     }
 }
 
