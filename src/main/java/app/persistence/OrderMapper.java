@@ -78,6 +78,47 @@ public class OrderMapper {
             throw new DatabaseException(e.getMessage());
         }
     }
+
+    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
+        List<Bottom> bottomsList = new ArrayList<>();
+        String sql = "SELECT * FROM bottom";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("bottom_id");
+                String name = rs.getString("name");
+                float price = rs.getFloat("price");
+                bottomsList.add(new Bottom(id, name, price));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+
+        return bottomsList;
+    }
+
+    public static List<Topping> getAllToppings (ConnectionPool connectionPool) throws DatabaseException {
+        List<Topping> toppingsList = new ArrayList<>();
+        String sql = "SELECT * FROM topping";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("topping_id");
+                String name = rs.getString("name");
+                float price = rs.getFloat("price");
+                toppingsList.add(new Topping(id, name, price));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+
+        return toppingsList;
+    }
+
     public static Bottom getBottomById(int bottomId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "SELECT * FROM bottom WHERE bottom_id = ?";
 
