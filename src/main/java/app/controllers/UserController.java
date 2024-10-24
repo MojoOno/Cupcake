@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.entities.User;
 import app.exceptions.DatabaseException;
 import app.persistence.ConnectionPool;
 import app.persistence.UserMapper;
@@ -39,5 +40,24 @@ public class UserController {
     }
 
     public static void getAllUsers() {
+    }
+
+    public static boolean isUserAdmin(Context ctx, ConnectionPool connectionPool) {
+        User currentUser = ctx.sessionAttribute("currentUser");
+        if (currentUser != null) {
+            try {
+                boolean isAdmin = UserMapper.isUserAdmin(currentUser.getUserId(), connectionPool);
+                if (isAdmin) {
+                    ctx.result("User is admin");
+                } else {
+                    ctx.result("User is not admin");
+                }
+            } catch (DatabaseException e) {
+                ctx.result("Error checking admin status " + e.getMessage());
+            }
+        }else {
+            ctx.result("User is not logged in");
+        }
+        return false;
     }
 }

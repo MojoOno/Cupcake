@@ -4,7 +4,10 @@ import app.exceptions.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+
 
 public class UserMapper {
 
@@ -41,4 +44,26 @@ public class UserMapper {
 
     public static void login(String username, String password) {
     }
-}
+
+    public static boolean isUserAdmin(int userId, ConnectionPool connectionPool) throws DatabaseException {
+        {
+            String sql = "SELECT is_admin FROM users WHERE user_id = ?";
+
+            try (
+                    Connection connection = connectionPool.getConnection();
+                    PreparedStatement ps = connection.prepareStatement(sql)
+            ) {
+                ps.setInt(1, userId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getBoolean("is_admin");
+                } else {
+                    throw new DatabaseException("User not found");
+                }
+            } catch (SQLException e) {
+                throw new DatabaseException("Database error", e.getMessage());
+            }
+            }
+        }
+    }
+
