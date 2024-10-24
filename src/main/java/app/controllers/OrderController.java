@@ -60,7 +60,7 @@ public class OrderController {
         int userId = ctx.sessionAttribute("currentUser");
         int bottomID = Integer.parseInt(ctx.formParam("bottomId"));
         int toppingId = Integer.parseInt(ctx.formParam("toppingId"));
-        int quantityId = Integer.parseInt(ctx.formParam("quantityId"));
+        int quantity = Integer.parseInt(ctx.formParam("quantityId"));
 
         try {
             Bottom bottom = OrderMapper.getBottomById(bottomID, connectionPool);
