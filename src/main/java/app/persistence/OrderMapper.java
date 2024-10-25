@@ -71,8 +71,7 @@ public class OrderMapper {
         return orderList;
     }
 
-    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders";
 
@@ -96,8 +95,7 @@ public class OrderMapper {
     public static void getOrderById(int orderId) {
     }
 
-    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLines = new ArrayList<>();
         String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
                 "FROM productline pl " +
@@ -126,9 +124,8 @@ public class OrderMapper {
         return productLines;
     }
 
-    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException
-    {
-        String sql = "UPDATE orders SET paid = true WHERE order_id = ?";
+    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
         try (
                 Connection connection = connectionPool.getConnection();

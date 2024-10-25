@@ -17,6 +17,12 @@ public class Bottom {
         this.bottomPrice = bottomPrice;
     }
 
+    public Bottom(int bottomId, String bottomName, float bottomPrice) {
+        this.bottomId = bottomId;
+        this.bottomName = bottomName;
+        this.bottomPrice = bottomPrice;
+    }
+
     public String getBottomName() {
         return bottomName;
     }

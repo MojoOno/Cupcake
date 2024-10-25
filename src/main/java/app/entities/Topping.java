@@ -16,6 +16,12 @@ public class Topping {
         this.toppingPrice = toppingPrice;
     }
 
+    public Topping(String bottomName, int toppingId, float toppingPrice) {
+        this.bottomName = bottomName;
+        this.toppingId = toppingId;
+        this.toppingPrice = toppingPrice;
+    }
+
     public int getToppingId() {
         return toppingId;
     }
