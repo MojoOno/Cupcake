@@ -164,8 +164,8 @@ public class OrderMapper {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("bottom_id");
-                String name = rs.getString("name");
-                float price = rs.getFloat("price");
+                String name = rs.getString("topping_name");
+                float price = rs.getFloat("topping_price");
                 bottomsList.add(new Bottom(id, name, price));
             }
         } catch (SQLException e) {
@@ -184,8 +184,8 @@ public class OrderMapper {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("topping_id");
-                String name = rs.getString("name");
-                float price = rs.getFloat("price");
+                String name = rs.getString("topping_name");
+                float price = rs.getFloat("topping_price");
                 toppingsList.add(new Topping(id, name, price));
             }
         } catch (SQLException e) {
@@ -204,8 +204,8 @@ public class OrderMapper {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("bottom_id");
-                    String name = rs.getString("name");
-                    float price = rs.getFloat("price");
+                    String name = rs.getString("topping_name");
+                    float price = rs.getFloat("topping_price");
                     return new Bottom(id, name, price);
                 } else {
                     throw new DatabaseException("Bottom not found");
@@ -224,8 +224,8 @@ public class OrderMapper {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("topping_id");
-                    String name = rs.getString("name");
-                    float price = rs.getFloat("price");
+                    String name = rs.getString("topping_name");
+                    float price = rs.getFloat("topping_price");
                     return new Topping(id, name, price);
                 } else {
                     throw new DatabaseException("Topping not found");
