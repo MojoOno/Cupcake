@@ -10,8 +10,10 @@ import app.persistence.ConnectionPool;
 import io.javalin.*;
 
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class OrderController {
@@ -19,6 +21,7 @@ public class OrderController {
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
+        app.post("/add-to-basket", OrderController.addToBasket(connectionPool));
 
     }
 
@@ -55,27 +58,33 @@ public class OrderController {
 
     public static void getOrderById() {
     }
-    public static void addToBasket(Context ctx, ConnectionPool connectionPool){
-
-        int userId = ctx.sessionAttribute("currentUser");
-        int bottomID = Integer.parseInt(ctx.formParam("bottomId"));
-        int toppingId = Integer.parseInt(ctx.formParam("toppingId"));
-        int quantity = Integer.parseInt(ctx.formParam("quantityId"));
-
-        try {
-            Bottom bottom = OrderMapper.getBottomById(bottomID, connectionPool);
-            Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
-            Cupcake cupcake = new Cupcake(bottom, topping);
-            ProductLine productLine = new ProductLine(0,cupcake,quantity);
-            OrderMapper.addProductLineToBasket(userId,productLine,connectionPool);
-            ctx.redirect("/basketpage");
-
-        } catch (DatabaseException e){
-            ctx.attribute("message","Failed to add to cart, try again");
-            ctx.render("index.html");
-        }
+    public static Handler addToBasket (ConnectionPool connectionPool) {
+        return ctx -> {
+            int userId = Integer.parseInt(ctx.formParam("userId"));
+            int bottomId = Integer.parseInt(ctx.formParam("kage"));
+            int toppingId = Integer.parseInt(ctx.formParam("topping"));
+            int quantity = Integer.parseInt(ctx.formParam("antal"));
 
 
+
+            try {
+                Bottom bottom = OrderMapper.getBottomById(bottomId, connectionPool);
+                Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
+                ProductLine productLine = new ProductLine(new Cupcake(bottom, topping), quantity);
+
+                // Create a new order and get the order ID
+                int orderId = OrderMapper.createOrder(userId, connectionPool);
+
+                // Add the product line to the newly created order
+                OrderMapper.addProductLineToBasket(orderId, productLine, connectionPool);
+
+
+
+                ctx.json(Map.of("success", true));
+            } catch (DatabaseException e) {
+                ctx.json(Map.of("success", false, "message", "Failed to add to cart, try again"));
+            }
+        };
     }
     public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
         return OrderMapper.getAllBottoms(connectionPool);

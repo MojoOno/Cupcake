@@ -16,6 +16,11 @@ public class ProductLine {
         this.cupcake = cupcake;
     }
 
+    public ProductLine(Cupcake cupcake, int quantity) {
+        this.cupcake = cupcake;
+        this.quantity = quantity;
+    }
+
     public Cupcake getCupcake() {
         return cupcake;
     }

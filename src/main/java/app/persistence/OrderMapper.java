@@ -1,6 +1,5 @@
 package app.persistence;
 
-import app.Main;
 import app.entities.Bottom;
 import app.entities.Cupcake;
 import app.entities.ProductLine;
@@ -18,7 +17,23 @@ import java.util.List;
 public class OrderMapper {
 
 
-    public static void createOrder(int userId, int orderTotal) {
+    public static int createOrder(int userId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO orders (user_id) VALUES (?)";
+
+        try (Connection connection = connectionPool.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); //returns the generated order_id
+                } else {
+                    throw new DatabaseException("Error creating order, no ID obtained");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
 
     public static void deleteOrder(int orderId) {
