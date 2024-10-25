@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OrderMapper
-{
+public class OrderMapper {
 
 
-    public static void createOrder(int userId, int orderTotal)
-    {
+    public static void createOrder(int userId, int orderTotal) {
     }
 
     public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
@@ -53,8 +51,7 @@ public class OrderMapper
         return orderList;
     }
 
-    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders";
 
@@ -75,12 +72,10 @@ public class OrderMapper
 
     }
 
-    public static void getOrderById(int orderId)
-    {
+    public static void getOrderById(int orderId) {
     }
 
-    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLines = new ArrayList<>();
         String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
                 "FROM productline pl " +
@@ -109,8 +104,7 @@ public class OrderMapper
         return productLines;
     }
 
-    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
         try (
@@ -127,4 +121,22 @@ public class OrderMapper
         }
     }
 
+    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
+        List<Bottom> bottomsList = new ArrayList<>();
+        String sql = "SELECT * FROM bottom";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs=ps.executeQuery()){
+            while(rs.next()){
+                int id = rs.getInt("bottom_id");
+                String name = rs.getString("bottom_name");
+                float price = rs.getFloat("bottom_price");
+                bottomsList.add(new Bottom(id, name, price));
+            }
+        }catch(SQLException e){
+            throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
+        }
+        return bottomsList;
+    }
 }

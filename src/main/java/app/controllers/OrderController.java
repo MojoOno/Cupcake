@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.entities.Bottom;
 import app.entities.Order;
 import app.entities.User;
 import app.persistence.OrderMapper;
@@ -91,6 +92,16 @@ public class OrderController {
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, Try again");
             ctx.render("index.html");
+        }
+    }
+
+    public static void getAllBottoms(Context ctx, ConnectionPool connectionPool) {
+        try {
+            List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
+            ctx.attribute("bottoms", bottomsList);
+            ctx.render("index.html");
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
         }
     }
 }
