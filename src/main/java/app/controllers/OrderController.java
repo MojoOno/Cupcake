@@ -21,20 +21,20 @@ import java.util.Map;
 public class OrderController {
 
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
+        app.get("/", ctx -> showIndexPage(ctx, connectionPool));
         app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
         app.get("/orders", ctx -> ctx.render("orders.html"));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
         app.post("/add-to-basket", OrderController.addToBasket(connectionPool));
-        app.get("/index", ctx -> showIndexPage(ctx, connectionPool)); // Ensure this is the only handler for '/'
     }
 
     public static void showIndexPage(Context ctx, ConnectionPool connectionPool) {
         try {
-            List<Bottom> bottoms = OrderMapper.getAllBottoms(connectionPool);
-            List<Topping> toppings = OrderMapper.getAllToppings(connectionPool);
-            ctx.attribute("bottoms", bottoms);
-            ctx.attribute("toppings", toppings);
+            List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
+            List<Topping> toppingsList = OrderMapper.getAllToppings(connectionPool);
+            ctx.attribute("bottomsList", bottomsList);
+            ctx.attribute("toppingsList", toppingsList);
             ctx.render("index.html");
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, try again");

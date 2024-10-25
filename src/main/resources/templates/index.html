@@ -13,32 +13,19 @@
     <h1>Velkommen ombord</h1>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
 
-    <form action="/add-to-basket" method="post">
-        <div class="dropdown">
-            <select name="bottom">
-                <option value="default">Vælg bund</option>
-                <th:block th:each="bottom : ${bottoms}">
-                    <option th:value="${bottom.bottomId}" th:text="${bottom.name + ' - ' + bottom.price + ' DKK'}"></option>
-                </th:block>
-            </select>
-
-            <select name="topping">
-                <option value="default">Vælg topping</option>
-                <th:block th:each="topping : ${toppings}">
-                    <option th:value="${topping.toppingId}" th:text="${topping.name + ' - ' + topping.price + ' DKK'}"></option>
-                </th:block>
-            </select>
-
-            <select name="antal">
-                <option value="default">Vælg antal</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="more">+10</option>
-            </select>
-
-            <input type="number" id="custom-antal" name="antalCustom" min="11" placeholder="Indtast antal" style="display:none; width: 150px;">
-        </div>
-
+    <form method="get">
+        <table class="table table-sm border border-dark table-borderless table-striped" style="width: max(50vw)">
+      <thead class="table-primary">
+      <tr>
+          <th scope="col" style="width: min(25vw)">topping</th>
+      </tr>
+      </thead>
+        <tbody class="table-group-divider">
+        <tr th:each="topping: ${toppingsList}">
+            <td th:text="${topping.toppingName}"></td>
+        </tr>
+        </tbody>
+        </table>
         <div class="kurv" style="margin-top: 20px;">
             <div class="kurv" th:if="${session.currentUser != null}">
                 <button type="submit">Læg i kurv</button>
@@ -48,6 +35,7 @@
                 <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
             </div>
         </div>
+
     </form>
 </div>
 

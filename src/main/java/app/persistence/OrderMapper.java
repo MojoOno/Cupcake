@@ -164,12 +164,12 @@ public class OrderMapper {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("bottom_id");
-                String name = rs.getString("topping_name");
-                float price = rs.getFloat("topping_price");
+                String name = rs.getString("bottom_name");
+                float price = rs.getFloat("bottom_price");
                 bottomsList.add(new Bottom(id, name, price));
             }
         } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+            throw new DatabaseException("error getting bottoms " + e.getMessage());
         }
 
         return bottomsList;
@@ -189,7 +189,7 @@ public class OrderMapper {
                 toppingsList.add(new Topping(id, name, price));
             }
         } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+            throw new DatabaseException("error getting toppings " + e.getMessage());
         }
 
         return toppingsList;
@@ -204,8 +204,8 @@ public class OrderMapper {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("bottom_id");
-                    String name = rs.getString("topping_name");
-                    float price = rs.getFloat("topping_price");
+                    String name = rs.getString("bottom_name");
+                    float price = rs.getFloat("bottom_price");
                     return new Bottom(id, name, price);
                 } else {
                     throw new DatabaseException("Bottom not found");
