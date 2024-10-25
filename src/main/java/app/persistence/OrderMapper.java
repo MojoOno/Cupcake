@@ -123,7 +123,8 @@ public class OrderMapper {
 
     }
 
-    public static void getOrderById(int orderId) {
+    public static List<ProductLine> getProductLineById(Order order, ConnectionPool connectionPool) throws DatabaseException {
+        return null;
     }
 
     public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {

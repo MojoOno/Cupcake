@@ -57,15 +57,15 @@ public class OrderController {
 
     public static void addToBasket (Context ctx, ConnectionPool connectionPool) {
 
-        createOrder(ctx, connectionPool);
-
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
-        if (currentOrder == null) {
-            currentOrder = new Order(0, currentUser.getUserId(),0);
-        }
+
 
         try {
+            if (currentOrder == null) {
+                currentOrder = OrderMapper.createOrder(currentUser, connectionPool);
+                ctx.sessionAttribute("currentOrder", currentOrder);
+            }
             int bottomId = Integer.parseInt(ctx.formParam("bottom"));
             int toppingId = Integer.parseInt(ctx.formParam("topping"));
             int quantity = Integer.parseInt(ctx.formParam("quantity"));
@@ -73,7 +73,7 @@ public class OrderController {
             Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
             Cupcake cupcake = new Cupcake(bottom, topping);
             ProductLine productLine = new ProductLine(cupcake, quantity);
-            OrderMapper.addToBasket(currentUser, currentOrder, productLine, connectionPool);
+            productLine = OrderMapper.addToBasket(currentUser, currentOrder, productLine, connectionPool);
             ctx.attribute("message", "Cupcake added to basket");
             ctx.render("index.html");
         } catch (DatabaseException e) {
@@ -87,13 +87,18 @@ public class OrderController {
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
-        int userId = ctx.sessionAttribute("currentUser");
+        User user = ctx.sessionAttribute("currentUser");
+        Order currentOrder = ctx.sessionAttribute("currentOrder");
+
+        ProductLine newProductLine = ctx.sessionAttribute("newProductLine");
         try {
-            List<ProductLine> basket = OrderMapper.getUserBasket(userId, connectionPool);
-            double totalPrice = basket.stream()
-                    .mapToDouble(pl -> pl.getCupcake().getPrice() * pl.getQuantity())
-                    .sum();
-            ctx.attribute("basket", basket);
+            if(currentOrder == null){
+                ctx.attribute("message", "Basket is empty");
+                ctx.render("basketPage.html");
+            }
+            List<ProductLine> basketList = OrderMapper.getUserBasket(1, connectionPool);
+            float totalPrice = newProductLine.getTotalPrice();
+            ctx.attribute("basketList", basketList);
             ctx.attribute("totalPrice", totalPrice);
             ctx.render("basketPage.html");
         } catch (DatabaseException e) {
