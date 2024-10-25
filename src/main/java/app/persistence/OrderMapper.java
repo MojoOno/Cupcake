@@ -15,30 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OrderMapper
-{
+public class OrderMapper {
 
 
-    public static void createOrder(int userId, int orderTotal)
-    {
-    public static int createOrder(int userId, ConnectionPool connectionPool) throws DatabaseException {
-        String sql = "INSERT INTO orders (user_id) VALUES (?)";
 
-        try (Connection connection = connectionPool.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1); //returns the generated order_id
-                } else {
-                    throw new DatabaseException("Error creating order, no ID obtained");
+        public static int createOrder ( int userId, ConnectionPool connectionPool) throws DatabaseException {
+            String sql = "INSERT INTO orders (user_id) VALUES (?)";
+
+            try (Connection connection = connectionPool.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); //returns the generated order_id
+                    } else {
+                        throw new DatabaseException("Error creating order, no ID obtained");
+                    }
                 }
+            } catch (SQLException e) {
+                throw new DatabaseException(e.getMessage());
             }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
         }
-    }
+
 
     public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "DELETE FROM orders WHERE order_id = ?";
@@ -51,10 +50,12 @@ public class OrderMapper
         }
     }
 
-    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
+    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws
+            DatabaseException {
     }
 
-    public static List<Order> getOrdersByUserId(int userId, ConnectionPool connectionPool) throws DatabaseException {
+    public static List<Order> getOrdersByUserId(int userId, ConnectionPool connectionPool) throws
+            DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
 
@@ -74,8 +75,7 @@ public class OrderMapper
         return orderList;
     }
 
-    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders";
 
@@ -96,12 +96,11 @@ public class OrderMapper
 
     }
 
-    public static void getOrderById(int orderId)
-    {
+    public static void getOrderById(int orderId) {
     }
 
-    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws
+            DatabaseException {
         List<ProductLine> productLines = new ArrayList<>();
         String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
                 "FROM productline pl " +
@@ -130,9 +129,8 @@ public class OrderMapper
         return productLines;
     }
 
-    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException
-    {
-        String sql = "UPDATE orders SET paid = true WHERE order_id = ?";
+    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
         try (
                 Connection connection = connectionPool.getConnection();
@@ -147,7 +145,9 @@ public class OrderMapper
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
     }
-    public static void addProductLineToBasket(int orderId, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
+
+    public static void addProductLineToBasket(int orderId, ProductLine productLine, ConnectionPool connectionPool) throws
+            DatabaseException {
         String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = connectionPool.getConnection();
@@ -182,7 +182,7 @@ public class OrderMapper
         return bottomsList;
     }
 
-    public static List<Topping> getAllToppings (ConnectionPool connectionPool) throws DatabaseException {
+    public static List<Topping> getAllToppings(ConnectionPool connectionPool) throws DatabaseException {
         List<Topping> toppingsList = new ArrayList<>();
         String sql = "SELECT * FROM topping";
 
@@ -222,6 +222,7 @@ public class OrderMapper
             throw new DatabaseException(e.getMessage());
         }
     }
+
     public static Topping getToppingById(int toppingId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "SELECT * FROM topping WHERE topping_id = ?";
 

@@ -12,108 +12,66 @@
 <div class="mid-menu">
     <h1>Velkommen ombord</h1>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
-    <form method="get" action="/basketpage">
-    <!-- Container til dropdowns og antal valg, placeret på samme linje -->
-    <div class="valg-container">
-        <!-- Dropdown til valg af bund -->
+
+    <form action="/add-to-basket" method="post">
         <div class="dropdown">
-            <select name="kage" style="width: 150px;">
+            <select name="bottom">
                 <option value="default">Vælg bund</option>
-                <option value="choice1">Chokolade (5kr)</option>
-                <option value="choice2">Vanilje (5kr)</option>
-                <option value="choice4">Muskatnød (5kr)</option>
-                <option value="choice5">Pistacie (5kr)</option>
-                <option value="choice6">Mandel (7kr)</option>
+                <th:block th:each="bottom : ${bottoms}">
+                    <option th:value="${bottom.bottomId}" th:text="${bottom.name + ' - ' + bottom.price + ' DKK'}"></option>
+                </th:block>
             </select>
-        </div>
 
-        <!-- Dropdown til valg af topping -->
-        <div class="dropdown">
-            <select name="topping" style="width: 150px;">
+            <select name="topping">
                 <option value="default">Vælg topping</option>
-                <option value="choice1">Chokolade frosting (5kr)</option>
-                <option value="choice2">Blåbær (5kr)</option>
-                <option value="choice3">Hindbær (5kr)</option>
-                <option value="choice4">Sprød (6kr)</option>
-                <option value="choice5">Jordbær (6kr)</option>
-                <option value="choice6">Rom/rosin (7kr)</option>
-                <option value="choice7">Appelsin (8kr)</option>
-                <option value="choice8">Citron (8kr)</option>
-                <option value="choice9">Blåskimmelost ()</option>
+                <th:block th:each="topping : ${toppings}">
+                    <option th:value="${topping.toppingId}" th:text="${topping.name + ' - ' + topping.price + ' DKK'}"></option>
+                </th:block>
             </select>
-        </div>
 
-        <!-- Dropdown til valg af antal -->
-        <div class="antal-valg">
-            <select id="antal-dropdown" name="antal" style="width: 150px;">
+            <select name="antal">
+                <option value="default">Vælg antal</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="more">+10</option> <!-- Option for more than 10 -->
+                <option value="more">+10</option>
             </select>
 
-            <input type="number" id="custom-antal" name="antalCustom" min="11" placeholder="Indtast antal" style="display:none; width: 150px;"> <!-- Hidden input field -->
+            <input type="number" id="custom-antal" name="antalCustom" min="11" placeholder="Indtast antal" style="display:none; width: 150px;">
         </div>
-    </div>
 
-    <div class="kurv" style="margin-top: 20px;">
-    <div class="kurv" th:if="${session.currentUser != null}">
-        <button type="submit">Læg i kurv</button>
-    </div>
+        <div class="kurv" style="margin-top: 20px;">
+            <div class="kurv" th:if="${session.currentUser != null}">
+                <button type="submit">Læg i kurv</button>
+            </div>
 
-
-    <div class="mt-4" th:if="${session.currentUser == null}">
-        <a href="/login" th:href="@{/login.html}" class="btn btn-success"
-           style="width: max(35vw)">
-            Login
-        </a>
-    </div>
-
-</div>
+            <div class="mt-4" th:if="${session.currentUser == null}">
+                <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
+            </div>
+        </div>
     </form>
 </div>
-<!-- CSS til at placere dropdowns og antal valg på linje -->
-<style>
-    .valg-container {
-        display: flex;
-        justify-content: flex-start;
-        gap: 20px; /* Afstand mellem dropdowns */
-        align-items: center;
-    }
-</style>
+
 
 <script>
-    // Få fat i dropdown, input-elementerne og containeren
     const dropdown = document.getElementById('antal-dropdown');
     const customInput = document.getElementById('custom-antal');
     const antalValgContainer = document.querySelector('.antal-valg');
 
-    // Funktion til at vise input-feltet og skjule dropdown-menuen
     dropdown.addEventListener('change', function() {
         if (dropdown.value === 'more') {
-            dropdown.style.display = 'none'; // Skjul dropdown-menuen
-            customInput.style.display = 'block'; // Vis input-feltet
-            customInput.focus(); // Sæt fokus på input-feltet
+            dropdown.style.display = 'none';
+            customInput.style.display = 'block';
+            customInput.focus();
         }
     });
 
-    // Funktion til at skjule input-feltet og vise dropdown-menuen igen
     document.addEventListener('click', function(event) {
-        // Tjek, om klikket er uden for dropdown-menuen eller input-feltet
         if (!antalValgContainer.contains(event.target)) {
             dropdown.style.display = 'block';
-            dropdown.value = "1"; // Gå tilbage til standardværdien "1"
-            customInput.style.display = 'none'; // Skjul input-feltet
+            dropdown.value = "1";
+            customInput.style.display = 'none';
         }
     });
 </script>
-
 </body>
 </html>

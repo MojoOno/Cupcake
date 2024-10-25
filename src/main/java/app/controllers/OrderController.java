@@ -17,17 +17,28 @@ import io.javalin.http.Handler;
 import java.util.List;
 import java.util.Map;
 
-
 public class OrderController {
 
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
         app.get("/orders", ctx -> ctx.render("orders.html"));
-        //app.post("/orders", ctx -> setOrderStatus(ctx, connectionPool));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
         app.post("/add-to-basket", OrderController.addToBasket(connectionPool));
+        app.get("/index", ctx -> showIndexPage(ctx, connectionPool)); // Ensure this is the only handler for '/'
+    }
 
+    public static void showIndexPage(Context ctx, ConnectionPool connectionPool) {
+        try {
+            List<Bottom> bottoms = OrderMapper.getAllBottoms(connectionPool);
+            List<Topping> toppings = OrderMapper.getAllToppings(connectionPool);
+            ctx.attribute("bottoms", bottoms);
+            ctx.attribute("toppings", toppings);
+            ctx.render("index.html");
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, try again");
+            ctx.render("index.html");
+        }
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
@@ -35,8 +46,8 @@ public class OrderController {
         try {
             List<ProductLine> basket = OrderMapper.getUserBasket(userId, connectionPool);
             double totalPrice = basket.stream()
-                                        .mapToDouble(pl -> pl.getCupcake().getPrice() * pl.getQuantity())
-                                        .sum();
+                    .mapToDouble(pl -> pl.getCupcake().getPrice() * pl.getQuantity())
+                    .sum();
             ctx.attribute("basket", basket);
             ctx.attribute("totalPrice", totalPrice);
             ctx.render("basketPage.html");
@@ -103,11 +114,9 @@ public class OrderController {
     public static Handler addToBasket (ConnectionPool connectionPool) {
         return ctx -> {
             int userId = Integer.parseInt(ctx.formParam("userId"));
-            int bottomId = Integer.parseInt(ctx.formParam("kage"));
+            int bottomId = Integer.parseInt(ctx.formParam("bottom"));
             int toppingId = Integer.parseInt(ctx.formParam("topping"));
             int quantity = Integer.parseInt(ctx.formParam("antal"));
-
-
 
             try {
                 Bottom bottom = OrderMapper.getBottomById(bottomId, connectionPool);
@@ -119,8 +128,6 @@ public class OrderController {
 
                 // Add the product line to the newly created order
                 OrderMapper.addProductLineToBasket(orderId, productLine, connectionPool);
-
-
 
                 ctx.json(Map.of("success", true));
             } catch (DatabaseException e) {
@@ -135,4 +142,3 @@ public class OrderController {
         return OrderMapper.getAllToppings(connectionPool);
     }
 }
-
