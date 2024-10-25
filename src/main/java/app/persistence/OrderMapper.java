@@ -17,12 +17,36 @@ import java.util.List;
 
 public class OrderMapper {
 
+    public static ProductLine addToBasket(Order order, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
+        ProductLine newProductLine = null;
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, order.getOrderId());
+            ps.setInt(2, productLine.getCupcake().getBottom().getBottomId());
+            ps.setInt(3, productLine.getCupcake().getTopping().getToppingId());
+            ps.setInt(4, productLine.getQuantity());
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 1) {
+                ResultSet rs = ps.getGeneratedKeys();
+                rs.next();
+                int productLineId = rs.getInt(1);
+                Cupcake newCupcake = new Cupcake(productLine.getCupcake().getBottom(), productLine.getCupcake().getTopping());
+                newProductLine = new ProductLine(productLineId, newCupcake, productLine.getQuantity());
+            } else { throw new DatabaseException("Error adding to basket");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error adding to basket", e.getMessage());
+        }
+        return newProductLine;
+    }
 
     public static int createOrder(int userId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "INSERT INTO orders (user_id) VALUES (?)";
 
         try (Connection connection = connectionPool.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, userId);
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -36,6 +60,7 @@ public class OrderMapper {
             throw new DatabaseException(e.getMessage());
         }
     }
+
 
     public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "DELETE FROM orders WHERE order_id = ?";
@@ -71,6 +96,7 @@ public class OrderMapper {
         }
         return orderList;
     }
+
     public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders";
@@ -140,20 +166,7 @@ public class OrderMapper {
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
     }
-    public static void addProductLineToBasket(int orderId, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
-        String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, orderId);
-            ps.setInt(2, productLine.getCupcake().getBottom().getBottomId());
-            ps.setInt(3, productLine.getCupcake().getTopping().getToppingId());
-            ps.setInt(4, productLine.getQuantity());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-    }
 
     public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
         List<Bottom> bottomsList = new ArrayList<>();
@@ -215,6 +228,7 @@ public class OrderMapper {
             throw new DatabaseException(e.getMessage());
         }
     }
+
     public static Topping getToppingById(int toppingId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "SELECT * FROM topping WHERE topping_id = ?";
 

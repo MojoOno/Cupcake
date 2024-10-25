@@ -14,18 +14,24 @@
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
 
     <form method="get">
-        <table class="table table-sm border border-dark table-borderless table-striped" style="width: max(50vw)">
-      <thead class="table-primary">
-      <tr>
-          <th scope="col" style="width: min(25vw)">topping</th>
-      </tr>
-      </thead>
-        <tbody class="table-group-divider">
-        <tr th:each="topping: ${toppingsList}">
-            <td th:text="${topping.toppingName}"></td>
-        </tr>
-        </tbody>
-        </table>
+        <div style="display: flex; justify-content: space-between; width: 50vw;">
+            <div>
+                <label for="bottoms">Vælg bund:</label>
+                <select id="bottoms" name="bottom" class="form-select">
+                    <option value="" disabled selected>Vælg bund</option>
+                    <option th:each="bottom: ${bottomsList}"  th:text="${bottom.bottomName} + ' - ' + ${bottom.bottomPrice} + 'DKK'"></option>
+                </select>
+            </div>
+            <div>
+                <label for="toppings">Vælg topping:</label>
+                <select id="toppings" name="topping" class="form-select">
+                    <option value="" disabled selected>Vælg topping</option>
+                    <option th:each="topping: ${toppingsList}" th:text="${topping.toppingName} + ' - ' + ${topping.toppingPrice} + 'DKK'"></option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <form>
         <div class="kurv" style="margin-top: 20px;">
             <div class="kurv" th:if="${session.currentUser != null}">
                 <button type="submit">Læg i kurv</button>
@@ -37,6 +43,7 @@
         </div>
 
     </form>
+
 </div>
 
 

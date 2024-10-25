@@ -11,6 +11,7 @@ public class Cupcake {
         this.topping = topping;
     }
 
+
     public int getPrice() {
         return (int) (bottom.getBottomPrice() + topping.getToppingPrice());
     }
