@@ -111,7 +111,7 @@ public class OrderMapper
 
     public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException
     {
-        String sql = "UPDATE orders SET paid = true WHERE order_id = ?";
+        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
         try (
                 Connection connection = connectionPool.getConnection();
@@ -126,4 +126,5 @@ public class OrderMapper
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
     }
+
 }
