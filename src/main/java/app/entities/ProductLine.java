@@ -3,10 +3,23 @@ package app.entities;
 public class ProductLine {
     private int productLineId;
     private int quantity;
+    private float totalPrice;
     private Cupcake cupcake;
 
-    public ProductLine(int productLineId, Cupcake cupcake, int quantity) {
+    public ProductLine(int productLineId,Cupcake cupcake,  int quantity, float totalPrice) {
+        this.cupcake = cupcake;
         this.productLineId = productLineId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+    }
+
+    public ProductLine(Cupcake cupcake, int quantity, float totalPrice) {
+        this.cupcake = cupcake;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+    }
+
+    public ProductLine(Cupcake cupcake, int quantity) {
         this.cupcake = cupcake;
         this.quantity = quantity;
     }
@@ -16,10 +29,7 @@ public class ProductLine {
         this.cupcake = cupcake;
     }
 
-    public ProductLine(Cupcake cupcake, int quantity) {
-        this.cupcake = cupcake;
-        this.quantity = quantity;
-    }
+
 
     public Cupcake getCupcake() {
         return cupcake;

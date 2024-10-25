@@ -15,8 +15,8 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <javalin.version>6.1.3</javalin.version>
-        <javalin-rendering.version>6.1.3</javalin-rendering.version>
+        <javalin.version>6.3.0</javalin.version>
+        <javalin-rendering.version>6.3.0</javalin-rendering.version>
         <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
         <thymeleaf-extras.version>3.0.4.RELEASE</thymeleaf-extras.version>
         <slf4j.version>2.0.12</slf4j.version>

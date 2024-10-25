@@ -17,23 +17,24 @@ import java.util.List;
 
 public class OrderMapper {
 
-    public static ProductLine addToBasket(Order order, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
-        String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
+    public static ProductLine addToBasket(User user, Order order, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO productline (total_price, bottom_id, topping_id, quantity, order_id) VALUES (?, ?, ?, ?, ?)";
         ProductLine newProductLine = null;
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, order.getOrderId());
+            ps.setInt(1, productLine.getCupcake().getPrice());
             ps.setInt(2, productLine.getCupcake().getBottom().getBottomId());
             ps.setInt(3, productLine.getCupcake().getTopping().getToppingId());
             ps.setInt(4, productLine.getQuantity());
+            ps.setInt(5, order.getOrderId());
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected == 1) {
                 ResultSet rs = ps.getGeneratedKeys();
                 rs.next();
                 int productLineId = rs.getInt(1);
                 Cupcake newCupcake = new Cupcake(productLine.getCupcake().getBottom(), productLine.getCupcake().getTopping());
-                newProductLine = new ProductLine(productLineId, newCupcake, productLine.getQuantity());
+                newProductLine = new ProductLine(productLineId, newCupcake, productLine.getQuantity(), productLine.getTotalPrice());
             } else { throw new DatabaseException("Error adding to basket");
             }
         } catch (SQLException e) {
@@ -42,23 +43,27 @@ public class OrderMapper {
         return newProductLine;
     }
 
-    public static int createOrder(int userId, ConnectionPool connectionPool) throws DatabaseException {
-        String sql = "INSERT INTO orders (user_id) VALUES (?)";
-
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1); //returns the generated order_id
-                } else {
-                    throw new DatabaseException("Error creating order, no ID obtained");
-                }
+    public static Order createOrder(User user, ConnectionPool connectionPool) throws DatabaseException {
+        String sql ="INSERT INTO orders (order_price, user_id) VALUES (?, ?)";
+        Order newOrder = null;
+        try(
+                Connection connection = connectionPool.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)
+        ) { ps.setFloat(1, 0);
+            ps.setInt(2, user.getUserId());
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 1) {
+                ResultSet rs = ps.getGeneratedKeys();
+                rs.next();
+                int newOrderId = rs.getInt(1);
+                newOrder = new Order(newOrderId, user.getUserId(), 0);
+            } else {
+                throw new DatabaseException("Error creating order");
             }
         } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+            throw new DatabaseException("Error creating order", e.getMessage());
         }
+        return newOrder;
     }
 
 
@@ -88,7 +93,7 @@ public class OrderMapper {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getDouble("order_total"));
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_total"));
                 orderList.add(order);
             }
         } catch (SQLException e) {
@@ -107,7 +112,7 @@ public class OrderMapper {
                 ResultSet rs = ps.executeQuery()
         ) {
             while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getDouble("order_total"));
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_total"));
                 orderList.add(order);
             }
         } catch (SQLException e) {

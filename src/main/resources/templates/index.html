@@ -11,37 +11,46 @@
 
 <div class="mid-menu">
     <h1>Velkommen ombord</h1>
+    <div th:if="${#ctx.message!=null}" th:text="${#ctx.message}">
+
+    </div>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
 
-    <form method="get">
+    <form method="post">
         <div style="display: flex; justify-content: space-between; width: 50vw;">
             <div>
-                <label for="bottoms">Vælg bund:</label>
-                <select id="bottoms" name="bottom" class="form-select">
+                <label for="bottom">Vælg bund:</label>
+                <select id="bottom" name="bottom" class="form-select">
                     <option value="" disabled selected>Vælg bund</option>
-                    <option th:each="bottom: ${bottomsList}"  th:text="${bottom.bottomName} + ' - ' + ${bottom.bottomPrice} + 'DKK'"></option>
+                    <option th:each="bottom: ${bottomsList}" th:value="${bottom.bottomId}" th:text="${bottom.bottomName} + ' - ' + ${bottom.bottomPrice} + 'DKK'"></option>
                 </select>
             </div>
             <div>
-                <label for="toppings">Vælg topping:</label>
-                <select id="toppings" name="topping" class="form-select">
+                <label for="topping">Vælg topping:</label>
+                <select id="topping" name="topping" class="form-select">
                     <option value="" disabled selected>Vælg topping</option>
-                    <option th:each="topping: ${toppingsList}" th:text="${topping.toppingName} + ' - ' + ${topping.toppingPrice} + 'DKK'"></option>
+                    <option th:each="topping: ${toppingsList}" th:value="${topping.toppingId}" th:text="${topping.toppingName} + ' - ' + ${topping.toppingPrice} + 'DKK'"></option>
                 </select>
             </div>
+            <div>
+                <label for="quantity">Antal:</label>
+                <select id="quantity" name="quantity" class="form-select">
+                    <option value="" disabled selected>Vælg Antal</option>
+                    <option th:each="i:${#numbers.sequence(1,10)}"
+                            th:value="${i}" th:text="${i}">
+                    </option>
+                </select>
+                <input type="number" id="custom-antal" name="custom-antal" style="display: none;">
+            </div>
         </div>
-    </form>
-    <form>
         <div class="kurv" style="margin-top: 20px;">
             <div class="kurv" th:if="${session.currentUser != null}">
-                <button type="submit">Læg i kurv</button>
+                <button type="submit" formaction="addtobasket">Læg i kurv</button>
             </div>
-
             <div class="mt-4" th:if="${session.currentUser == null}">
-                <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
-            </div>
+            <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
         </div>
-
+        </div>
     </form>
 
 </div>

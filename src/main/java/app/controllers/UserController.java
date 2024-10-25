@@ -14,7 +14,10 @@ public class UserController {
         app.get("/logout", ctx -> logout(ctx));
         app.get("/createuser", ctx -> ctx.render("createuser.html"));
         app.post("/createuser", ctx -> createUser(ctx, connectionPool));
+
     }
+
+
 
     public static void login(Context ctx, ConnectionPool connectionPool) {
         String username = ctx.formParam("username");
@@ -25,7 +28,7 @@ public class UserController {
             ctx.sessionAttribute("currentUser", user);
             //Hvis ja, send videre til forsiden med login besked
             ctx.attribute("message", "Du er nu logget ind");
-            ctx.render("index.html");
+            OrderController.showIndexPage(ctx, connectionPool);
         }
         catch (DatabaseException e){
             ctx.attribute("message", e.getMessage());
