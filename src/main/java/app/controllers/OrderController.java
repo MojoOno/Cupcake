@@ -2,6 +2,9 @@ package app.controllers;
 
 import app.entities.Order;
 import app.entities.User;
+import app.entities.Bottom;
+import app.entities.Cupcake;
+import app.entities.Topping;
 import app.persistence.OrderMapper;
 import app.entities.ProductLine;
 import app.exceptions.DatabaseException;
@@ -9,18 +12,34 @@ import app.persistence.ConnectionPool;
 import io.javalin.*;
 
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class OrderController {
 
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
+        app.get("/", ctx -> showIndexPage(ctx, connectionPool));
         app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
         app.get("/orders", ctx -> ctx.render("orders.html"));
-        //app.post("/orders", ctx -> setOrderStatus(ctx, connectionPool));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
+        //app.post("/add-to-basket", OrderController.addToBasket(connectionPool));
+    }
+
+    public static void showIndexPage(Context ctx, ConnectionPool connectionPool) {
+        try {
+            List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
+            List<Topping> toppingsList = OrderMapper.getAllToppings(connectionPool);
+            ctx.attribute("bottomsList", bottomsList);
+            ctx.attribute("toppingsList", toppingsList);
+            ctx.render("index.html");
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, try again");
+            ctx.render("index.html");
+        }
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
@@ -28,8 +47,8 @@ public class OrderController {
         try {
             List<ProductLine> basket = OrderMapper.getUserBasket(userId, connectionPool);
             double totalPrice = basket.stream()
-                                        .mapToDouble(pl -> pl.getCupcake().getPrice() * pl.getQuantity())
-                                        .sum();
+                    .mapToDouble(pl -> pl.getCupcake().getPrice() * pl.getQuantity())
+                    .sum();
             ctx.attribute("basket", basket);
             ctx.attribute("totalPrice", totalPrice);
             ctx.render("basketPage.html");
@@ -93,5 +112,33 @@ public class OrderController {
             ctx.render("index.html");
         }
     }
-}
+    public static void addToBasket (Context ctx, ConnectionPool connectionPool) {
+        User currentUser = ctx.sessionAttribute("currentUser");
+        Order currentOrder = ctx.sessionAttribute("currentOrder");
+        int bottomId = Integer.parseInt(ctx.formParam("bottom"));
+        int toppingId = Integer.parseInt(ctx.formParam("topping"));
+        int quantity = Integer.parseInt(ctx.formParam("quantity"));
+        try {
+            Bottom bottom = OrderMapper.getBottomById(bottomId, connectionPool);
+            Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
+            Cupcake cupcake = new Cupcake(bottom, topping);
+            ProductLine productLine = new ProductLine(cupcake, quantity);
+            OrderMapper.addToBasket(currentOrder, productLine, connectionPool);
+            ctx.attribute("message", "Cupcake added to basket");
+            ctx.render("index.html");
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, Try again");
+            ctx.render("index.html");
+        }
+    }
 
+    public static void getAllBottoms(Context ctx, ConnectionPool connectionPool) {
+        try {
+            List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
+            ctx.attribute("bottoms", bottomsList);
+            ctx.render("index.html");
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

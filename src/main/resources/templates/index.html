@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:replace="~{fragments :: head('Front page')}"></div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
 
 <body style="margin: 1px;">
 <!--- Change topmenu in the fragments.html --->
@@ -11,40 +13,60 @@
     <h1>Velkommen ombord</h1>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
 
-    <div class="dropdown">
-        <select name="kage">
-            <option value="default">Vælg bund</option>
-            <option value="choice1">Chokolade</option>
-            <option value="choice2">Vanilje</option>
-        </select>
+    <form method="get">
+        <div style="display: flex; justify-content: space-between; width: 50vw;">
+            <div>
+                <label for="bottoms">Vælg bund:</label>
+                <select id="bottoms" name="bottom" class="form-select">
+                    <option value="" disabled selected>Vælg bund</option>
+                    <option th:each="bottom: ${bottomsList}"  th:text="${bottom.bottomName} + ' - ' + ${bottom.bottomPrice} + 'DKK'"></option>
+                </select>
+            </div>
+            <div>
+                <label for="toppings">Vælg topping:</label>
+                <select id="toppings" name="topping" class="form-select">
+                    <option value="" disabled selected>Vælg topping</option>
+                    <option th:each="topping: ${toppingsList}" th:text="${topping.toppingName} + ' - ' + ${topping.toppingPrice} + 'DKK'"></option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <form>
+        <div class="kurv" style="margin-top: 20px;">
+            <div class="kurv" th:if="${session.currentUser != null}">
+                <button type="submit">Læg i kurv</button>
+            </div>
 
-        <select name="topping">
-            <option value="default">Vælg topping</option>
-            <option value="choice1">Chokolade frosting</option>
-            <option value="choice2">Jordbær</option>
-        </select>
+            <div class="mt-4" th:if="${session.currentUser == null}">
+                <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
+            </div>
+        </div>
 
-        <select name="antal">
-            <option value="default">Vælg antal</option>
-            <option value="choice1">1</option>
-            <option value="choice2">2</option>
-        </select>
-
-    </div>
-
-    <div class="kurv" th:if="${session.currentUser != null}">
-        <button type="submit">Læg i kurv</button>
-    </div>
-
-
-    <div class="mt-4" th:if="${session.currentUser == null}">
-        <a href="/login" th:href="@{/login.html}" class="btn btn-success"
-           style="width: max(35vw)">
-            Login
-        </a>
-    </div>
+    </form>
 
 </div>
 
+
+<script>
+    const dropdown = document.getElementById('antal-dropdown');
+    const customInput = document.getElementById('custom-antal');
+    const antalValgContainer = document.querySelector('.antal-valg');
+
+    dropdown.addEventListener('change', function() {
+        if (dropdown.value === 'more') {
+            dropdown.style.display = 'none';
+            customInput.style.display = 'block';
+            customInput.focus();
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!antalValgContainer.contains(event.target)) {
+            dropdown.style.display = 'block';
+            dropdown.value = "1";
+            customInput.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

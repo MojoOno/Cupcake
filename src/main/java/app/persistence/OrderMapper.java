@@ -1,6 +1,10 @@
 package app.persistence;
 
 import app.entities.*;
+import app.entities.Bottom;
+import app.entities.Cupcake;
+import app.entities.ProductLine;
+import app.entities.Topping;
 import app.exceptions.DatabaseException;
 
 import java.sql.Connection;
@@ -11,13 +15,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OrderMapper
-{
+public class OrderMapper {
 
+    public static ProductLine addToBasket(Order order, ProductLine productLine, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO productline (order_id, bottom_id, topping_id, quantity) VALUES (?, ?, ?, ?)";
+        ProductLine newProductLine = null;
 
-    public static void createOrder(int userId, int orderTotal)
-    {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, order.getOrderId());
+            ps.setInt(2, productLine.getCupcake().getBottom().getBottomId());
+            ps.setInt(3, productLine.getCupcake().getTopping().getToppingId());
+            ps.setInt(4, productLine.getQuantity());
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 1) {
+                ResultSet rs = ps.getGeneratedKeys();
+                rs.next();
+                int productLineId = rs.getInt(1);
+                Cupcake newCupcake = new Cupcake(productLine.getCupcake().getBottom(), productLine.getCupcake().getTopping());
+                newProductLine = new ProductLine(productLineId, newCupcake, productLine.getQuantity());
+            } else { throw new DatabaseException("Error adding to basket");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error adding to basket", e.getMessage());
+        }
+        return newProductLine;
     }
+
+    public static int createOrder(int userId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "INSERT INTO orders (user_id) VALUES (?)";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); //returns the generated order_id
+                } else {
+                    throw new DatabaseException("Error creating order, no ID obtained");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
 
     public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "DELETE FROM orders WHERE order_id = ?";
@@ -30,7 +73,8 @@ public class OrderMapper
         }
     }
 
-    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
+    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws
+            DatabaseException {
     }
 
     public static List<Order> getOrdersByUserId(int userId, ConnectionPool connectionPool) throws DatabaseException {
@@ -53,8 +97,7 @@ public class OrderMapper
         return orderList;
     }
 
-    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders";
 
@@ -75,12 +118,10 @@ public class OrderMapper
 
     }
 
-    public static void getOrderById(int orderId)
-    {
+    public static void getOrderById(int orderId) {
     }
 
-    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException
-    {
+    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLines = new ArrayList<>();
         String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
                 "FROM productline pl " +
@@ -109,9 +150,8 @@ public class OrderMapper
         return productLines;
     }
 
-    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException
-    {
-        String sql = "UPDATE orders SET paid = true WHERE order_id = ?";
+    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
         try (
                 Connection connection = connectionPool.getConnection();
@@ -124,6 +164,89 @@ public class OrderMapper
             }
         } catch (SQLException e) {
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
+        }
+    }
+
+
+    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
+        List<Bottom> bottomsList = new ArrayList<>();
+        String sql = "SELECT * FROM bottom";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("bottom_id");
+                String name = rs.getString("bottom_name");
+                float price = rs.getFloat("bottom_price");
+                bottomsList.add(new Bottom(id, name, price));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("error getting bottoms " + e.getMessage());
+        }
+
+        return bottomsList;
+    }
+
+    public static List<Topping> getAllToppings(ConnectionPool connectionPool) throws DatabaseException {
+        List<Topping> toppingsList = new ArrayList<>();
+        String sql = "SELECT * FROM topping";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("topping_id");
+                String name = rs.getString("topping_name");
+                float price = rs.getFloat("topping_price");
+                toppingsList.add(new Topping(id, name, price));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("error getting toppings " + e.getMessage());
+        }
+
+        return toppingsList;
+    }
+
+    public static Bottom getBottomById(int bottomId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "SELECT * FROM bottom WHERE bottom_id = ?";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bottomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("bottom_id");
+                    String name = rs.getString("bottom_name");
+                    float price = rs.getFloat("bottom_price");
+                    return new Bottom(id, name, price);
+                } else {
+                    throw new DatabaseException("Bottom not found");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    public static Topping getToppingById(int toppingId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "SELECT * FROM topping WHERE topping_id = ?";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, toppingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("topping_id");
+                    String name = rs.getString("topping_name");
+                    float price = rs.getFloat("topping_price");
+                    return new Topping(id, name, price);
+                } else {
+                    throw new DatabaseException("Topping not found");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
         }
     }
 }
