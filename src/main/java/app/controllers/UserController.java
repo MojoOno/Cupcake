@@ -11,6 +11,7 @@ public class UserController {
 
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.post("/login", ctx -> login(ctx, connectionPool));
+        app.get("login", ctx -> ctx.render("login.html"));
         app.get("/logout", ctx -> logout(ctx));
         app.get("/createuser", ctx -> ctx.render("createuser.html"));
         app.post("/createuser", ctx -> createUser(ctx, connectionPool));
@@ -22,17 +23,20 @@ public class UserController {
 
         try {
             User user = UserMapper.login(username, password, connectionPool);
-            ctx.sessionAttribute("currentUser", user);
-            //Hvis ja, send videre til forsiden med login besked
-            ctx.attribute("message", "Du er nu logget ind");
-            ctx.render("index.html");
-        }
-        catch (DatabaseException e){
+            if (user != null) {
+                ctx.sessionAttribute("currentUser", user);
+                //Hvis ja, send videre til forsiden med login besked
+                ctx.attribute("message", "Du er nu logget ind");
+                ctx.render("index.html");
+            } else {
+                throw new DatabaseException("Ugyldig brugernavn eller adgangskode, prøv igen.");
+            }
+        }catch (DatabaseException e){
             ctx.attribute("message", e.getMessage());
             ctx.render("index.html");
         }
     }
-
+//Brugerens kurv bliver ikke gemt.
     private static void logout(Context ctx) {
         ctx.req().getSession().invalidate();
         ctx.redirect("/");
