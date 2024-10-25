@@ -16,8 +16,8 @@ public class Topping {
         this.toppingPrice = toppingPrice;
     }
 
-    public Topping(String bottomName, int toppingId, float toppingPrice) {
-        this.bottomName = bottomName;
+    public Topping(String toppingName, int toppingId, float toppingPrice) {
+        this.toppingName = toppingName;
         this.toppingId = toppingId;
         this.toppingPrice = toppingPrice;
     }

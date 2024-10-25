@@ -136,25 +136,6 @@ public class OrderController {
             }
         };
     }
-    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
-        return OrderMapper.getAllBottoms(connectionPool);
-    }
-    public static List<Topping> getAllToppings(ConnectionPool connectionPool) throws DatabaseException {
-        return OrderMapper.getAllToppings(connectionPool);
-    }
-
-    public static void setOrderStatus(Context ctx, ConnectionPool connectionPool) {
-        int orderId = Integer.parseInt(ctx.formParam("orderId"));
-        String status = ctx.formParam("status");
-        try {
-            OrderMapper.setOrderStatus(orderId, connectionPool);
-            ctx.attribute("message", "Order status updated");
-            ctx.render("orders.html");
-        } catch (DatabaseException e) {
-            ctx.attribute("message", "Something went wrong, Try again");
-            ctx.render("index.html");
-        }
-    }
 
     public static void getAllBottoms(Context ctx, ConnectionPool connectionPool) {
         try {
