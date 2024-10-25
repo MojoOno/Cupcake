@@ -22,7 +22,9 @@
         <a class="active" href="../index.html" th:href="@{/}">Home</a>
         <a href="../orders.html" th:href="@{/orders}">Ordrer</a>
         <a href="../customers.html" th:href="@{/customers}">Kunder</a>
-        <span id="user-email"></span>
+        <div class="mt-4" th:if="${session.currentUser != null}">
+            <a  th:text="${session.currentUser.username}"></a>
+        </div>
         <div class="mt-4" th:if="${session.currentUser != null}">
         <a href="../basketPage.html" th:href="@{/basketpage}" class="kurv">
             <i class="fas fa-shopping-cart"></i> <!-- Kurv-ikon fra Font Awesome -->
@@ -33,7 +35,7 @@
 
 </header>
 
-<!--- top-nav fragment, use: <div th:replace="~{fragments :: top-nav-createUser}"></div> , to get acces to this part--->
+<!--- top-nav-createUser fragment, use: <div th:replace="~{fragments :: top-nav-createUser}"></div> , to get acces to this part--->
 <header th:fragment="top-nav-createUser">
     <a href="../index.html" th:href="@{/}">
         <img alt="logo" src="../../public/images/cupcakemedlogo.png" th:src="@{/images/cupcakemedlogo.png}"/>
