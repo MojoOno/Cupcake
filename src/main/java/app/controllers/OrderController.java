@@ -2,6 +2,9 @@ package app.controllers;
 
 import app.entities.Order;
 import app.entities.User;
+import app.entities.Bottom;
+import app.entities.Cupcake;
+import app.entities.Topping;
 import app.persistence.OrderMapper;
 import app.entities.ProductLine;
 import app.exceptions.DatabaseException;
@@ -9,8 +12,10 @@ import app.persistence.ConnectionPool;
 import io.javalin.*;
 
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class OrderController {
@@ -21,6 +26,8 @@ public class OrderController {
         app.get("/orders", ctx -> ctx.render("orders.html"));
         //app.post("/orders", ctx -> setOrderStatus(ctx, connectionPool));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
+        app.post("/add-to-basket", OrderController.addToBasket(connectionPool));
+
     }
 
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
@@ -79,6 +86,40 @@ public class OrderController {
     }
 
     public static void getOrderById() {
+    }
+    public static Handler addToBasket (ConnectionPool connectionPool) {
+        return ctx -> {
+            int userId = Integer.parseInt(ctx.formParam("userId"));
+            int bottomId = Integer.parseInt(ctx.formParam("kage"));
+            int toppingId = Integer.parseInt(ctx.formParam("topping"));
+            int quantity = Integer.parseInt(ctx.formParam("antal"));
+
+
+
+            try {
+                Bottom bottom = OrderMapper.getBottomById(bottomId, connectionPool);
+                Topping topping = OrderMapper.getToppingById(toppingId, connectionPool);
+                ProductLine productLine = new ProductLine(new Cupcake(bottom, topping), quantity);
+
+                // Create a new order and get the order ID
+                int orderId = OrderMapper.createOrder(userId, connectionPool);
+
+                // Add the product line to the newly created order
+                OrderMapper.addProductLineToBasket(orderId, productLine, connectionPool);
+
+
+
+                ctx.json(Map.of("success", true));
+            } catch (DatabaseException e) {
+                ctx.json(Map.of("success", false, "message", "Failed to add to cart, try again"));
+            }
+        };
+    }
+    public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
+        return OrderMapper.getAllBottoms(connectionPool);
+    }
+    public static List<Topping> getAllToppings(ConnectionPool connectionPool) throws DatabaseException {
+        return OrderMapper.getAllToppings(connectionPool);
     }
 
     public static void setOrderStatus(Context ctx, ConnectionPool connectionPool) {
