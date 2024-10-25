@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:replace="~{fragments :: head('Front page')}"></div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
 
 <body style="margin: 1px;">
 <!--- Change topmenu in the fragments.html --->
@@ -11,40 +13,65 @@
     <h1>Velkommen ombord</h1>
     <h2>Øens bedste cupcakes. Vælg og bestil her:</h2>
 
-    <div class="dropdown">
-        <select name="kage">
-            <option value="default">Vælg bund</option>
-            <option value="choice1">Chokolade</option>
-            <option value="choice2">Vanilje</option>
-        </select>
+    <form action="/add-to-basket" method="post">
+        <div class="dropdown">
+            <select name="bottom">
+                <option value="default">Vælg bund</option>
+                <th:block th:each="bottom : ${bottoms}">
+                    <option th:value="${bottom.bottomId}" th:text="${bottom.name + ' - ' + bottom.price + ' DKK'}"></option>
+                </th:block>
+            </select>
 
-        <select name="topping">
-            <option value="default">Vælg topping</option>
-            <option value="choice1">Chokolade frosting</option>
-            <option value="choice2">Jordbær</option>
-        </select>
+            <select name="topping">
+                <option value="default">Vælg topping</option>
+                <th:block th:each="topping : ${toppings}">
+                    <option th:value="${topping.toppingId}" th:text="${topping.name + ' - ' + topping.price + ' DKK'}"></option>
+                </th:block>
+            </select>
 
-        <select name="antal">
-            <option value="default">Vælg antal</option>
-            <option value="choice1">1</option>
-            <option value="choice2">2</option>
-        </select>
+            <select name="antal">
+                <option value="default">Vælg antal</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="more">+10</option>
+            </select>
 
-    </div>
+            <input type="number" id="custom-antal" name="antalCustom" min="11" placeholder="Indtast antal" style="display:none; width: 150px;">
+        </div>
 
-    <div class="kurv" th:if="${session.currentUser != null}">
-        <button type="submit">Læg i kurv</button>
-    </div>
+        <div class="kurv" style="margin-top: 20px;">
+            <div class="kurv" th:if="${session.currentUser != null}">
+                <button type="submit">Læg i kurv</button>
+            </div>
 
-
-    <div class="mt-4" th:if="${session.currentUser == null}">
-        <a href="/login" th:href="@{/login.html}" class="btn btn-success"
-           style="width: max(35vw)">
-            Login
-        </a>
-    </div>
-
+            <div class="mt-4" th:if="${session.currentUser == null}">
+                <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
+            </div>
+        </div>
+    </form>
 </div>
 
+
+<script>
+    const dropdown = document.getElementById('antal-dropdown');
+    const customInput = document.getElementById('custom-antal');
+    const antalValgContainer = document.querySelector('.antal-valg');
+
+    dropdown.addEventListener('change', function() {
+        if (dropdown.value === 'more') {
+            dropdown.style.display = 'none';
+            customInput.style.display = 'block';
+            customInput.focus();
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!antalValgContainer.contains(event.target)) {
+            dropdown.style.display = 'block';
+            dropdown.value = "1";
+            customInput.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

@@ -128,3 +128,10 @@ header img {
     margin-right: auto;
     margin-left: auto;
 }
+
+.valg-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    align-items: center;
+}
