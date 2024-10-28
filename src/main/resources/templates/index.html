@@ -44,7 +44,7 @@
         </div>
         <div class="kurv" style="margin-top: 20px;">
             <div class="kurv" th:if="${session.currentUser != null}">
-                <button type="submit" formaction="addtobasket">Læg i kurv</button>
+                <button type="submit" formaction="addtobasket" style="width: 300px">Læg i kurv</button>
             </div>
             <div class="mt-4" th:if="${session.currentUser == null}">
                 <div class="input-group mt-3 d-flex ms-auto justify-content-center">
