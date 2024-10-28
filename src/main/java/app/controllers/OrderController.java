@@ -46,6 +46,11 @@ public class OrderController {
         Order currentOrder = ctx.sessionAttribute("currentOrder");
         try {
             List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder, connectionPool);
+                float totalPrice = 0;
+            for (ProductLine productLine : productLinesList) {
+                totalPrice += productLine.getTotalPrice();
+            }
+            ctx.attribute("orderPrice", totalPrice);
             ctx.attribute("productLinesList", productLinesList);
             ctx.render("basketpage.html");
         } catch (DatabaseException e) {
