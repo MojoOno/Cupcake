@@ -88,4 +88,27 @@ public class UserMapper {
             }
             }
         }
+
+        public static void updateBalance(User user, ConnectionPool connectionPool) throws DatabaseException{
+            String sql = "update users set balance = ? where user_id = ?";
+
+            try (
+                    Connection connection = connectionPool.getConnection();
+                    PreparedStatement ps = connection.prepareStatement(sql)
+            )
+            {
+                ps.setFloat(1, user.getBalance());
+                ps.setInt(2, user.getUserId());
+
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected != 1)
+                {
+                    throw new DatabaseException("Fejl ved opdatering af balance");
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new DatabaseException("Fejl ved opdatering af balance", e.getMessage());
+            }
+        }
     }

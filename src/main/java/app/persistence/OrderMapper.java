@@ -56,7 +56,7 @@ public class OrderMapper {
                 ResultSet rs = ps.getGeneratedKeys();
                 rs.next();
                 int newOrderId = rs.getInt(1);
-                newOrder = new Order(newOrderId, user.getUserId(), 0);
+                newOrder = new Order(newOrderId, user.getUserId(), 0, false );
             } else {
                 throw new DatabaseException("Error creating order");
             }
@@ -81,8 +81,7 @@ public class OrderMapper {
     public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
     }
 
-    public static List<Order> getOrdersByUserId(Order order, ConnectionPool connectionPool) throws DatabaseException {
-        order = null;
+    public static List<Order> getOrdersByUserId(User user, ConnectionPool connectionPool) throws DatabaseException {
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
 
@@ -90,14 +89,15 @@ public class OrderMapper {
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
-            ps.setInt(1, order.getUserId());
+            ps.setInt(1, user.getUserId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int order_id = rs.getInt("order_id");
                 int user_id = rs.getInt("user_id");
                 float order_price = rs.getFloat("order_price");
-                order = new Order(order_id, user_id, order_price);
-                orderList.add(order);
+                boolean is_paid = rs.getBoolean("paid_status");
+                Order newOrder = new Order(order_id, user_id, order_price, is_paid);
+                orderList.add(newOrder);
             }
         } catch (SQLException e) {
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
@@ -115,7 +115,7 @@ public class OrderMapper {
                 ResultSet rs = ps.executeQuery()
         ) {
             while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_price"));
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_price"), rs.getBoolean("paid_status"));
                 orderList.add(order);
             }
         } catch (SQLException e) {

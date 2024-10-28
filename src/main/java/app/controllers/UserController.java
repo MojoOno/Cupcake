@@ -52,7 +52,7 @@ public class UserController {
                 UserMapper.createUser(username, password1, connectionPool);
                 ctx.attribute("message", "Du er hermed oprettet med brugernavn: " + username +
                         ". Nu skal du logge på.");
-                ctx.render("index.html");
+                OrderController.showIndexPage(ctx, connectionPool);
             } catch (DatabaseException e) {
                 ctx.attribute("message", "Dit brugernavn findes allerede. Prøv igen, eller log ind");
                 ctx.render("createuser.html");

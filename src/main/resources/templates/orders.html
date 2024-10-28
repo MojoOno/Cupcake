@@ -17,8 +17,8 @@
     <div th:if="${#ctx.message!=null}" th:text="${#ctx.message}">
     </div>
 
-    <form method="post">
-        <table class="table table-sm border border-dark table-borderless table-striped" style="width: max(50vw)">
+    <form method="get">
+        <table class="table table-sm border border-dark table-borderless table-striped" style="width: 1190px">
             <thead class="table-primary">
             <tr>
                 <th scope="col">Order ID</th>
@@ -30,16 +30,15 @@
             <tbody class="table-group-divider">
             <tr th:each="order: ${ordersList}">
                 <td th:text="${order.orderId}"></td>
-                <td th:text="${order.userId}" th:if="${isAdmin}"></td>
+                <td th:text="${order.userId}"></td>
                 <td th:text="${order.isPaid}"></td>
-                    <form method="post" th:action="@{/updateOrder}">
+                <td>
+                    <form method="post" th:if="${currentUser.isAdmin}">
                         <input type="hidden" name="order_id" th:value="${order.orderId}"/>
-                        <input type="text" name="new_status" placeholder="New Status"/>
-                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                    </form>
-                    <form method="post" th:action="@{/deleteOrder}">
-                        <input type="hidden" name="order_id" th:value="${order.orderId}"/>
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+
+                        <button type="submit" class="btn btn-primary btn-sm" formaction="@{/updateOrder}">Update</button>
+
+                        <button type="submit" class="btn btn-danger btn-sm" formaction="@{/deleteOrder}">Delete</button>
                     </form>
                 </td>
             </tr>

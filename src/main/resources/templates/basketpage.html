@@ -35,7 +35,7 @@
                 <p>Total Price: <span th:text="${orderPrice}"></span></p>
             </div>
             <div class="kurv">
-                <button type="submit">Bestil</button>
+                <button type="submit" th:formaction="@{/payorder}">Bestil</button>
             </div>
         </form>
     </div>

@@ -9,27 +9,59 @@ import app.persistence.OrderMapper;
 import app.entities.ProductLine;
 import app.exceptions.DatabaseException;
 import app.persistence.ConnectionPool;
+import app.persistence.UserMapper;
 import io.javalin.*;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 
 
-public class OrderController {
+public class OrderController
+{
 
-    public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
+    public static void addRoutes(Javalin app, ConnectionPool connectionPool)
+    {
         app.get("/", ctx -> showIndexPage(ctx, connectionPool));
         app.post("/addtobasket", ctx -> addToBasket(ctx, connectionPool));
         app.get("/basketpage", ctx -> showBasketPage(ctx, connectionPool));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
         app.get("/orders", ctx -> showOrdersPage(ctx, connectionPool));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
+        app.post("/payorder", ctx -> payOrder(ctx, connectionPool));
     }
 
-    public static void showIndexPage(Context ctx, ConnectionPool connectionPool) {
+    private static void payOrder(Context ctx, ConnectionPool connectionPool)
+    {
+        User currentUser = ctx.sessionAttribute("currentUser");
+        Order currentOrder = ctx.sessionAttribute("currentOrder");
+
+        if (currentOrder == null || currentUser == null) {
+            ctx.attribute("message", "Basket is empty");
+            showIndexPage(ctx, connectionPool);
+            return;
+        }
+        try {
+            if(currentUser.pay(currentOrder.getOrderPrice())){
+                UserMapper.updateBalance(currentUser, connectionPool);
+                OrderMapper.setOrderStatus(currentOrder.getOrderId(), connectionPool);
+                ctx.attribute("message", "Order paid");
+                ctx.sessionAttribute("currentOrder", null);
+            } else {
+                ctx.attribute("message", "Insufficient funds");
+            }
+            showIndexPage(ctx, connectionPool);
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, Try again");
+            showIndexPage(ctx, connectionPool);
+        }
+    }
+
+    public static void showIndexPage(Context ctx, ConnectionPool connectionPool)
+    {
         try {
             List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
             List<Topping> toppingsList = OrderMapper.getAllToppings(connectionPool);
@@ -42,11 +74,18 @@ public class OrderController {
         }
     }
 
-    public static void showBasketPage(Context ctx, ConnectionPool connectionPool) {
+    public static void showBasketPage(Context ctx, ConnectionPool connectionPool)
+    {
         Order currentOrder = ctx.sessionAttribute("currentOrder");
+        if (currentOrder == null) {
+            ctx.attribute("message", "Basket is empty");
+            OrderController.showIndexPage(ctx, connectionPool);
+            return;
+        }
         try {
             List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder, connectionPool);
-                float totalPrice = 0;
+            currentOrder.setProductLineList(productLinesList);
+            float totalPrice = 0;
             for (ProductLine productLine : productLinesList) {
                 totalPrice += productLine.getTotalPrice();
             }
@@ -59,25 +98,26 @@ public class OrderController {
         }
     }
 
-    public static void showOrdersPage(Context ctx, ConnectionPool connectionPool) {
+    public static void showOrdersPage(Context ctx, ConnectionPool connectionPool)
+    {
         User currentUser = ctx.sessionAttribute("currentUser");
-            if(currentUser == null){
-                ctx.attribute("message", "Please login to view orders");
-                ctx.render("index.html");
-            }else if (currentUser.isAdmin()) {
-                getAllOrders(ctx, connectionPool);
-            } else{
-                getOrdersByUser(ctx, connectionPool);
-            }
+        if (currentUser == null) {
+            ctx.attribute("message", "Please login to view orders");
+            ctx.render("index.html");
+        } else if (currentUser.isAdmin()) {
+            getAllOrders(ctx, connectionPool);
+        } else {
+            getOrdersByUser(ctx, connectionPool);
+        }
 
     }
 
-    public static void getOrdersByUser(Context ctx, ConnectionPool connectionPool) {
+    public static void getOrdersByUser(Context ctx, ConnectionPool connectionPool)
+    {
         User currentUser = ctx.sessionAttribute("currentUser");
-        Order currentOrder = ctx.sessionAttribute("currentOrder");
         try {
-            List<Order> ordersList = OrderMapper.getOrdersByUserId(currentOrder, connectionPool);
-            ctx.attribute("orders", ordersList);
+            List<Order> ordersList = OrderMapper.getOrdersByUserId(currentUser, connectionPool);
+            ctx.attribute("ordersList", ordersList);
             ctx.attribute("currentUser", currentUser);
             ctx.render("orders.html");
         } catch (DatabaseException e) {
@@ -86,11 +126,13 @@ public class OrderController {
         }
     }
 
-    public static void getAllOrders(Context ctx, ConnectionPool connectionPool) {
+    public static void getAllOrders(Context ctx, ConnectionPool connectionPool)
+    {
         User currentUser = ctx.sessionAttribute("currentUser");
         try {
             List<Order> ordersList = OrderMapper.getAllOrders(connectionPool);
-            ctx.attribute("orders", ordersList);
+            System.out.println(ordersList);
+            ctx.attribute("ordersList", ordersList);
             ctx.attribute("currentUser", currentUser);
             ctx.render("orders.html");
         } catch (DatabaseException e) {
@@ -99,20 +141,8 @@ public class OrderController {
         }
     }
 
-    public static void createOrder (Context ctx, ConnectionPool connectionPool) {
-        User currentUser = ctx.sessionAttribute("currentUser");
-        try {
-            Order order = OrderMapper.createOrder(currentUser, connectionPool);
-            ctx.sessionAttribute("currentOrder", order);
-            ctx.attribute("message", "Order created");
-            ctx.render("index.html");
-        } catch (DatabaseException e) {
-            ctx.attribute("message", "Something went wrong, Try again");
-            ctx.render("index.html");
-        }
-    }
-
-    public static void addToBasket (Context ctx, ConnectionPool connectionPool) {
+    public static void addToBasket(Context ctx, ConnectionPool connectionPool)
+    {
 
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
@@ -136,22 +166,20 @@ public class OrderController {
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, Try again" + e.getMessage());
             ctx.render("index.html");
-        }catch(NumberFormatException e){
-            ctx.attribute("message", "Please select a bottom, topping and quantity " + ctx.formParam("bottom") +" "+ctx.formParam("topping") +" " + ctx.formParam("quantity")+ " " + e.getMessage());
+        } catch (NumberFormatException e) {
+            ctx.attribute("message", "Please select a bottom, topping and quantity " + ctx.formParam("bottom") + " " + ctx.formParam("topping") + " " + ctx.formParam("quantity") + " " + e.getMessage());
 
             OrderController.showIndexPage(ctx, connectionPool);
         }
     }
 
-    public static List<ProductLine> getProductLineById(Order order, ConnectionPool connectionPool) throws DatabaseException {
-        return null;
-    }
 
-    public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
+    public static void getUserBasket(Context ctx, ConnectionPool connectionPool)
+    {
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
 
-        if(currentOrder == null || currentUser == null){
+        if (currentOrder == null || currentUser == null) {
             ctx.attribute("message", "Basket is empty");
             ctx.render("basketpage.html");
         }
@@ -161,7 +189,7 @@ public class OrderController {
             List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder, connectionPool);
             if (productLinesList.isEmpty()) {
                 ctx.attribute("message", "Basket is empty");
-            }else {
+            } else {
                 ctx.attribute("message", "Basket is not empty");
 
                 float totalPrice = currentOrder.getOrderPrice();
@@ -175,7 +203,8 @@ public class OrderController {
         }
     }
 
-    public static void deleteOrder(Context ctx, ConnectionPool connectionPool) {
+    public static void deleteOrder(Context ctx, ConnectionPool connectionPool)
+    {
         int orderId = Integer.parseInt(ctx.formParam("order_id"));
         try {
             OrderMapper.deleteOrder(orderId, connectionPool);
@@ -186,30 +215,5 @@ public class OrderController {
         getAllOrders(ctx, connectionPool); // Refresh the orders page
     }
 
-    public static void updateOrder(Context ctx, ConnectionPool connectionPool) {
-    }
 
-
-    public static void setOrderStatus(Context ctx, ConnectionPool connectionPool) {
-        int orderId = Integer.parseInt(ctx.formParam("orderId"));
-        String status = ctx.formParam("status");
-        try {
-            OrderMapper.setOrderStatus(orderId, connectionPool);
-            ctx.attribute("message", "Order status updated");
-            ctx.render("orders.html");
-        } catch (DatabaseException e) {
-            ctx.attribute("message", "Something went wrong, Try again");
-            ctx.render("index.html");
-        }
-    }
-
-    public static void getAllBottoms(Context ctx, ConnectionPool connectionPool) {
-        try {
-            List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
-            ctx.attribute("bottoms", bottomsList);
-            ctx.render("index.html");
-        } catch (DatabaseException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

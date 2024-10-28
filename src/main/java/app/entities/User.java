@@ -23,15 +23,24 @@ public class User {
         return userId;
     }
 
-
     public String getPassword() {
         return password;
     }
+
     public boolean isAdmin() {
         return isAdmin;
     }
-
     public float getBalance() {
         return balance;
     }
+
+    public boolean pay(float amount) {
+        if(balance >= amount) {
+            balance -= amount;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
