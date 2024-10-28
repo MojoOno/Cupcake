@@ -24,6 +24,10 @@ public class Order {
     }
 
     public float getOrderPrice() {
+        this.orderPrice = 0;
+        for (ProductLine productLine : productList) {
+            orderPrice += productLine.getTotalPrice();
+        }
         return orderPrice;
     }
 }

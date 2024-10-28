@@ -1,5 +1,7 @@
 package app.entities;
 
+
+
 public class ProductLine {
     private int productLineId;
     private int quantity;
@@ -46,4 +48,5 @@ public class ProductLine {
     public float getTotalPrice() {
         return cupcake.getPrice() * quantity;
     }
+
 }

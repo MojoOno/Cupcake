@@ -23,7 +23,7 @@ public class OrderController {
     public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.get("/", ctx -> showIndexPage(ctx, connectionPool));
         app.post("/addtobasket", ctx -> addToBasket(ctx, connectionPool));
-        app.get("/basketpage", ctx -> ctx.render("basketPage.html"));
+        app.get("/basketpage", ctx -> showBasketPage(ctx, connectionPool));
         app.post("/basketpage", ctx -> getUserBasket(ctx, connectionPool));
         app.get("/orders", ctx -> ctx.render("orders.html"));
         app.post("/deleteorder", ctx -> deleteOrder(ctx, connectionPool));
@@ -39,6 +39,18 @@ public class OrderController {
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, try again");
             ctx.render("index.html");
+        }
+    }
+
+    public static void showBasketPage(Context ctx, ConnectionPool connectionPool) {
+        Order currentOrder = ctx.sessionAttribute("currentOrder");
+        try {
+            List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder, connectionPool);
+            ctx.attribute("productLinesList", productLinesList);
+            ctx.render("basketpage.html");
+        } catch (DatabaseException e) {
+            ctx.attribute("message", "Something went wrong, try again");
+            ctx.render("basketpage.html");
         }
     }
 
@@ -86,33 +98,35 @@ public class OrderController {
         }
     }
 
+    public static List<ProductLine> getProductLineById(Order order, ConnectionPool connectionPool) throws DatabaseException {
+        return null;
+    }
+
     public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
-        User user = ctx.sessionAttribute("currentUser");
+        User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
 
-        if(currentOrder == null){
+        if(currentOrder == null || currentUser == null){
             ctx.attribute("message", "Basket is empty");
-            ctx.render("index.html");
+            ctx.render("basketpage.html");
         }
 
         try {
 
-            List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder.getOrderId(), connectionPool);
+            List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder, connectionPool);
             if (productLinesList.isEmpty()) {
                 ctx.attribute("message", "Basket is empty");
             }else {
-                float totalPrice = 0;
-                for (ProductLine productLine : productLinesList) {
-                    totalPrice += productLine.getTotalPrice();
-                }
+                ctx.attribute("message", "Basket is not empty");
 
-                ctx.attribute("basketList", productLinesList);
-                ctx.attribute("totalPrice", totalPrice);
+                float totalPrice = currentOrder.getOrderPrice();
+                ctx.attribute("productLinesList", productLinesList);
+                ctx.attribute("orderPrice", totalPrice);
             }
-            ctx.render("basketPage.html");
+            ctx.render("basketpage.html");
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, Try again");
-            ctx.render("basketPage.html");
+            ctx.render("basketpage.html");
         }
     }
 
@@ -152,8 +166,6 @@ public class OrderController {
         }
     }
 
-    public static void getOrderById() {
-    }
 
     public static void setOrderStatus(Context ctx, ConnectionPool connectionPool) {
         int orderId = Integer.parseInt(ctx.formParam("orderId"));

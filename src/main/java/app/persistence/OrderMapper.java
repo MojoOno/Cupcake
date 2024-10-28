@@ -127,24 +127,31 @@ public class OrderMapper {
         return null;
     }
 
-    public static List<ProductLine> getUserBasket(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+    public static List<ProductLine> getUserBasket(Order order, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLinesList = new ArrayList<>();
-        String sql = "SELECT pl.productline_id, t.topping_name, t.topping_price, topping_price, b.bottom_name, b.bottom_price, bottom_price " +
+        String sql = "SELECT pl.productline_id, pl.quantity, pl.total_price, t.topping_name, t.topping_price,  b.bottom_name, b.bottom_price " +
                 "FROM productline pl " +
                 "JOIN orders o ON pl.order_id = o.order_id " +
                 "JOIN topping t ON pl.topping_id = t.topping_id " +
                 "JOIN bottom b ON pl.bottom_id = b.bottom_id " +
-                "WHERE o.order_id = ?";
+                "WHERE pl.order_id = ?";
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, orderId);
+            ps.setInt(1,order.getOrderId() );
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Topping topping = new Topping(rs.getInt("topping_id"), rs.getFloat("topping_price"));
-                Bottom bottom = new Bottom(rs.getInt("bottom_id"), rs.getFloat("bottom_price"));
+                int productLineId = rs.getInt("productline_id");
+                String toppingName = rs.getString("topping_name");
+                float toppingPrice = rs.getFloat("topping_price");
+                String bottomName = rs.getString("bottom_name");
+                float bottomPrice = rs.getFloat("bottom_price");
+                int quantity = rs.getInt("quantity");
+                float totalPrice = rs.getFloat("total_price");
+                Topping topping = new Topping(toppingName, toppingPrice);
+                Bottom bottom = new Bottom(bottomName, bottomPrice);
                 Cupcake cupcake = new Cupcake(bottom, topping);
-                ProductLine productLine = new ProductLine(rs.getInt("productline_id"), cupcake);
+                ProductLine productLine = new ProductLine(productLineId, cupcake, quantity, totalPrice);
                 productLinesList.add(productLine);
             }
         } catch (SQLException e) {
