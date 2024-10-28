@@ -14,8 +14,10 @@
 
 <div class="mid-menu">
     <h1>Orders:</h1>
+    <div th:if="${#ctx.message!=null}" th:text="${#ctx.message}">
+    </div>
 
-    <form method="get">
+    <form method="post">
         <table class="table table-sm border border-dark table-borderless table-striped" style="width: max(50vw)">
             <thead class="table-primary">
             <tr>
@@ -26,18 +28,17 @@
             </tr>
             </thead>
             <tbody class="table-group-divider">
-            <tr th:each="order: ${orderList}">
-                <td th:text="${order.order_id}"></td>
-                <td th:text="${order.user_id}" th:if="${isAdmin}"></td>
-                <td th:text="${order.paid_status}"></td>
-                <td th:if="${isAdmin}">
+            <tr th:each="order: ${ordersList}">
+                <td th:text="${order.orderId}"></td>
+                <td th:text="${order.userId}" th:if="${isAdmin}"></td>
+                <td th:text="${order.isPaid}"></td>
                     <form method="post" th:action="@{/updateOrder}">
-                        <input type="hidden" name="order_id" th:value="${order.order_id}"/>
+                        <input type="hidden" name="order_id" th:value="${order.orderId}"/>
                         <input type="text" name="new_status" placeholder="New Status"/>
                         <button type="submit" class="btn btn-primary btn-sm">Update</button>
                     </form>
                     <form method="post" th:action="@{/deleteOrder}">
-                        <input type="hidden" name="order_id" th:value="${order.order_id}"/>
+                        <input type="hidden" name="order_id" th:value="${order.orderId}"/>
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>

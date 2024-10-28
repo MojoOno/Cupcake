@@ -78,11 +78,11 @@ public class OrderMapper {
         }
     }
 
-    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws
-            DatabaseException {
+    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
     }
 
-    public static List<Order> getOrdersByUserId(int userId, ConnectionPool connectionPool) throws DatabaseException {
+    public static List<Order> getOrdersByUserId(Order order, ConnectionPool connectionPool) throws DatabaseException {
+        order = null;
         List<Order> orderList = new ArrayList<>();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
 
@@ -90,10 +90,13 @@ public class OrderMapper {
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
-            ps.setInt(1, userId);
+            ps.setInt(1, order.getUserId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_total"));
+                int order_id = rs.getInt("order_id");
+                int user_id = rs.getInt("user_id");
+                float order_price = rs.getFloat("order_price");
+                order = new Order(order_id, user_id, order_price);
                 orderList.add(order);
             }
         } catch (SQLException e) {
@@ -112,7 +115,7 @@ public class OrderMapper {
                 ResultSet rs = ps.executeQuery()
         ) {
             while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_total"));
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_price"));
                 orderList.add(order);
             }
         } catch (SQLException e) {
