@@ -32,7 +32,7 @@ public class UserController {
         }
         catch (DatabaseException e){
             ctx.attribute("message", e.getMessage());
-            ctx.render("index.html");
+            ctx.render("login");
         }
     }
 

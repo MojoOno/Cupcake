@@ -47,7 +47,12 @@
                 <button type="submit" formaction="addtobasket">Læg i kurv</button>
             </div>
             <div class="mt-4" th:if="${session.currentUser == null}">
-            <a href="/login" th:href="@{/login.html}" class="btn btn-success" style="width: max(35vw)">Login</a>
+                <div class="input-group mt-3 d-flex ms-auto justify-content-center">
+                    <button type="submit" class="btn btn-success btn-outline-success text-light" style="width: 1000px; height: auto"
+                            formaction="/login" th:href="@{/login.html}">Login
+                    </button>
+                </div>
+
         </div>
         </div>
     </form>

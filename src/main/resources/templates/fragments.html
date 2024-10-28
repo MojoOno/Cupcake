@@ -22,8 +22,9 @@
         <a class="active" href="../index.html" th:href="@{/}">Home</a>
         <a href="../orders.html" th:href="@{/orders}">Ordrer</a>
         <a href="../customers.html" th:href="@{/customers}">Kunder</a>
-        <div class="mt-4" th:if="${session.currentUser != null}">
-            <a  th:text="${session.currentUser.username}"></a>
+        <a th:if="${session.currentUser != null}" href="index.html" th:href="@{/logout/}">Logout</a>
+        <div class="topmenu" th:if="${session.currentUser != null}">
+            <a th:text="${session.currentUser.username}"></a>
         </div>
         <div class="mt-4" th:if="${session.currentUser != null}">
         <a href="../basketpage.html" th:href="@{/basketpage}" class="kurv">
