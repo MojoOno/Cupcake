@@ -22,10 +22,11 @@
         <a class="active" href="../index.html" th:href="@{/}">Home</a>
         <a href="../orders.html" th:href="@{/orders}">Ordrer</a>
         <a href="../customers.html" th:href="@{/customers}">Kunder</a>
-        <div class="mt-4" th:if="${session.currentUser != null}">
-            <a  th:text="${session.currentUser.username}"></a>
+        <a th:if="${session.currentUser != null}" href="index.html" th:href="@{/logout/}">Logout</a>
+        <div class="topmenu" th:if="${session.currentUser != null}">
+            <a th:text="${session.currentUser.username}"></a>
         </div>
-        <div class="mt-4" th:if="${session.currentUser != null}">
+        <div class="topmenu" th:if="${session.currentUser != null}">
         <a href="../basketPage.html" th:href="@{/basketpage}" class="kurv">
             <i class="fas fa-shopping-cart"></i> <!-- Kurv-ikon fra Font Awesome -->
             Kurv
@@ -43,6 +44,7 @@
     <div class="topmenu">
         <a class="active" href="../index.html" th:href="@{/}">Home</a>
     </div>
+    <a th:if="${session.currentUser != null}" href="index.html" th:href="@{/logout/}">Logout</a>
 
 </header>
 
