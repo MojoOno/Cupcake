@@ -127,35 +127,32 @@ public class OrderMapper {
         return null;
     }
 
-    public static List<ProductLine> getUserBasket(int userId, ConnectionPool connectionPool) throws DatabaseException {
-        List<ProductLine> productLines = new ArrayList<>();
-        String sql = "SELECT pl.productline_id, t.topping_id, t.topping_price AS topping_price, b.bottom_id, b.bottom_price AS bottom_price " +
+    public static List<ProductLine> getUserBasket(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        List<ProductLine> productLinesList = new ArrayList<>();
+        String sql = "SELECT pl.productline_id, t.topping_name, t.topping_price, topping_price, b.bottom_name, b.bottom_price, bottom_price " +
                 "FROM productline pl " +
                 "JOIN orders o ON pl.order_id = o.order_id " +
                 "JOIN topping t ON pl.topping_id = t.topping_id " +
                 "JOIN bottom b ON pl.bottom_id = b.bottom_id " +
-                "WHERE o.user_id = ?";
+                "WHERE o.order_id = ?";
 
-        try (
-                Connection connection = connectionPool.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)
-        ) {
-            ps.setInt(1, userId);
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Topping topping = new Topping(rs.getInt("topping_id"), rs.getFloat("topping_price"));
                 Bottom bottom = new Bottom(rs.getInt("bottom_id"), rs.getFloat("bottom_price"));
                 Cupcake cupcake = new Cupcake(bottom, topping);
                 ProductLine productLine = new ProductLine(rs.getInt("productline_id"), cupcake);
-                productLines.add(productLine);
+                productLinesList.add(productLine);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
 
-        return productLines;
+        return productLinesList;
     }
-
     public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 

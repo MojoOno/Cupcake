@@ -90,24 +90,31 @@ public class OrderController {
         User user = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
 
-        ProductLine newProductLine = ctx.sessionAttribute("newProductLine");
+        if(currentOrder == null){
+            ctx.attribute("message", "Basket is empty");
+            ctx.render("index.html");
+        }
+
         try {
-            if(currentOrder == null){
+
+            List<ProductLine> productLinesList = OrderMapper.getUserBasket(currentOrder.getOrderId(), connectionPool);
+            if (productLinesList.isEmpty()) {
                 ctx.attribute("message", "Basket is empty");
-                ctx.render("basketPage.html");
+            }else {
+                float totalPrice = 0;
+                for (ProductLine productLine : productLinesList) {
+                    totalPrice += productLine.getTotalPrice();
+                }
+
+                ctx.attribute("basketList", productLinesList);
+                ctx.attribute("totalPrice", totalPrice);
             }
-            List<ProductLine> basketList = OrderMapper.getUserBasket(1, connectionPool);
-            float totalPrice = newProductLine.getTotalPrice();
-            ctx.attribute("basketList", basketList);
-            ctx.attribute("totalPrice", totalPrice);
             ctx.render("basketPage.html");
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, Try again");
             ctx.render("basketPage.html");
         }
     }
-
-
 
     public static void deleteOrder(Context ctx, ConnectionPool connectionPool) {
         int orderId = Integer.parseInt(ctx.formParam("order_id"));
