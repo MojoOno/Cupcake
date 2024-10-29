@@ -103,27 +103,6 @@ public class OrderMapper {
         return orderList;
     }
 
-    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
-        List<Order> orderList = new ArrayList<>();
-        String sql = "SELECT * FROM orders";
-
-        try (
-                Connection connection = connectionPool.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()
-        ) {
-            while (rs.next()) {
-                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_price"), rs.getBoolean("paid_status"));
-                orderList.add(order);
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
-        }
-        return orderList;
-
-
-    }
-
     public static List<ProductLine> getUserBasket(Order order, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLinesList = new ArrayList<>();
         String sql = "SELECT pl.productline_id, pl.quantity, pl.total_price, t.topping_name, t.topping_price,  b.bottom_name, b.bottom_price " +
@@ -158,21 +137,25 @@ public class OrderMapper {
         return productLinesList;
     }
 
-    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
-        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
+    public static List<Order> getAllOrders(ConnectionPool connectionPool) throws DatabaseException {
+        List<Order> orderList = new ArrayList<>();
+        String sql = "SELECT * FROM orders";
 
         try (
                 Connection connection = connectionPool.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
         ) {
-            ps.setInt(1, orderId);
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected != 1) {
-                throw new DatabaseException("Error setting order to paid");
+            while (rs.next()) {
+                Order order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getFloat("order_price"), rs.getBoolean("paid_status"));
+                orderList.add(order);
             }
         } catch (SQLException e) {
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
+        return orderList;
+
+
     }
 
     public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
@@ -254,6 +237,23 @@ public class OrderMapper {
             }
         } catch (SQLException e) {
             throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
+        String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
+
+        try (
+                Connection connection = connectionPool.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+            ps.setInt(1, orderId);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected != 1) {
+                throw new DatabaseException("Error setting order to paid");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
     }
 }
