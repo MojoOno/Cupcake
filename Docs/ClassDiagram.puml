@@ -1,5 +1,5 @@
 @startuml
-
+!pragma Layout smetana
 
     class Main {
     }
