@@ -6,14 +6,14 @@ top to bottom direction
 
 state NotLoggedIn {
     [*] --> NotLoggedInIndex : Start side
-    NotLoggedInIndex : Her kan man se udvalg af cupcakes
+    NotLoggedInIndex : - Her kan man se udvalg af cupcakes
 
     NotLoggedInIndex --> LoginDialog : On Click "Login"
     LoginDialog --> LoginDialog : Fejl i login
     LoginDialog --> CreateUser : On Click "Opret bruger"
 
     state CreateUser {
-        CreateUser : Opret ny bruger med email + password
+        CreateUser : - Opret ny bruger med email + password
         CreateUser --> CreateUser : Fejl i oprettelse
         CreateUser --> NotLoggedInIndex : Bruger oprettet
     }
@@ -22,20 +22,23 @@ state NotLoggedIn {
 state LoggedIn {
     LoggedInIndex : Logged in
     LoginDialog --> LoggedInIndex : Gyldigt login
-    CupcakeSelection : Hvis ikke logget ind, view only
-    CupcakeSelection: Vælg bund, top og antal
+    CupcakeSelection : - Hvis ikke logget ind, view only
+    CupcakeSelection: - Vælg bund, top og antal
     LoggedInIndex --> CupcakeSelection
-    CupcakeSelection --> CupcakeSelection : Læg i kurv
+    CupcakeSelection --> CupcakeSelection : If logged in: Læg i kurv
     CupcakeSelection --> Cart : On Click "Kurv"
     CupcakeSelection --> Orders : On Click "Ordrer"
     CupcakeSelection --> NotLoggedInIndex : Logout
 
     Cart --> LoggedInIndex : Click "Logo" or "Home"
     Cart --> Orders : Click "Bestil"
+    Cart: - Hvis der er penge på konto, bliver ordre betalt når man trykker "Bestil"
+    Cart: - Hvis der ikke er penge på konto, bliver der givet en besked,
+    Cart: og den bliver tilføjet til ordre.
 
 
-        Orders : Admin views all orders
-        Orders : User views personal orders
+        Orders : - Admin views all orders
+        Orders : - User views personal orders
         Orders --> LoggedInIndex : Click "Logo" or "Home"
 
 }
