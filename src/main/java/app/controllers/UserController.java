@@ -17,8 +17,6 @@ public class UserController {
 
     }
 
-
-
     public static void login(Context ctx, ConnectionPool connectionPool) {
         String username = ctx.formParam("username");
         String password = ctx.formParam("password");
@@ -29,8 +27,7 @@ public class UserController {
             //Hvis ja, send videre til forsiden med login besked
             ctx.attribute("message", "Du er nu logget ind");
             OrderController.showIndexPage(ctx, connectionPool);
-        }
-        catch (DatabaseException e){
+        } catch (DatabaseException e) {
             ctx.attribute("message", e.getMessage());
             ctx.render("login");
         }
@@ -63,22 +60,6 @@ public class UserController {
         }
     }
 
-    public static void getAllUsers() {
-    }
-
-    public static boolean isUserAdmin(Context ctx, ConnectionPool connectionPool) {
-        User currentUser = ctx.sessionAttribute("currentUser");
-        if (currentUser != null) {
-            try {
-                return UserMapper.isUserAdmin(currentUser.getUserId(), connectionPool);
-            } catch (DatabaseException e) {
-                ctx.result("Error checking admin status " + e.getMessage());
-            }
-        } else {
-            ctx.result("User not logged in");
-        }
-        return false;
-    }
 }
 
 

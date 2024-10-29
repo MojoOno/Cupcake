@@ -35,7 +35,8 @@ public class OrderMapper {
                 int productLineId = rs.getInt(1);
                 Cupcake newCupcake = new Cupcake(productLine.getCupcake().getBottom(), productLine.getCupcake().getTopping());
                 newProductLine = new ProductLine(productLineId, newCupcake, productLine.getQuantity(), productLine.getTotalPrice());
-            } else { throw new DatabaseException("Error adding to basket");
+            } else {
+                throw new DatabaseException("Error adding to basket");
             }
         } catch (SQLException e) {
             throw new DatabaseException("Error adding to basket", e.getMessage());
@@ -44,19 +45,20 @@ public class OrderMapper {
     }
 
     public static Order createOrder(User user, ConnectionPool connectionPool) throws DatabaseException {
-        String sql ="INSERT INTO orders (order_price, user_id) VALUES (?, ?)";
+        String sql = "INSERT INTO orders (order_price, user_id) VALUES (?, ?)";
         Order newOrder = null;
-        try(
+        try (
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)
-        ) { ps.setFloat(1, 0);
+        ) {
+            ps.setFloat(1, 0);
             ps.setInt(2, user.getUserId());
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected == 1) {
                 ResultSet rs = ps.getGeneratedKeys();
                 rs.next();
                 int newOrderId = rs.getInt(1);
-                newOrder = new Order(newOrderId, user.getUserId(), 0, false );
+                newOrder = new Order(newOrderId, user.getUserId(), 0, false);
             } else {
                 throw new DatabaseException("Error creating order");
             }
@@ -65,7 +67,6 @@ public class OrderMapper {
         }
         return newOrder;
     }
-
 
     public static void deleteOrder(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "DELETE FROM orders WHERE order_id = ?";
@@ -76,9 +77,6 @@ public class OrderMapper {
         } catch (SQLException e) {
             throw new DatabaseException("Error deleting order", e.getMessage());
         }
-    }
-
-    public static void updateOrder(int orderId, String newStatus, ConnectionPool connectionPool) throws DatabaseException {
     }
 
     public static List<Order> getOrdersByUserId(User user, ConnectionPool connectionPool) throws DatabaseException {
@@ -126,10 +124,6 @@ public class OrderMapper {
 
     }
 
-    public static List<ProductLine> getProductLineById(Order order, ConnectionPool connectionPool) throws DatabaseException {
-        return null;
-    }
-
     public static List<ProductLine> getUserBasket(Order order, ConnectionPool connectionPool) throws DatabaseException {
         List<ProductLine> productLinesList = new ArrayList<>();
         String sql = "SELECT pl.productline_id, pl.quantity, pl.total_price, t.topping_name, t.topping_price,  b.bottom_name, b.bottom_price " +
@@ -141,7 +135,7 @@ public class OrderMapper {
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1,order.getOrderId() );
+            ps.setInt(1, order.getOrderId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int productLineId = rs.getInt("productline_id");
@@ -163,6 +157,7 @@ public class OrderMapper {
 
         return productLinesList;
     }
+
     public static void setOrderStatus(int orderId, ConnectionPool connectionPool) throws DatabaseException {
         String sql = "UPDATE orders SET paid_status = true WHERE order_id = ?";
 
@@ -179,7 +174,6 @@ public class OrderMapper {
             throw new DatabaseException("An error occurred with the database, try again", e.getMessage());
         }
     }
-
 
     public static List<Bottom> getAllBottoms(ConnectionPool connectionPool) throws DatabaseException {
         List<Bottom> bottomsList = new ArrayList<>();

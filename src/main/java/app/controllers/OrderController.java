@@ -20,11 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class OrderController
-{
+public class OrderController {
 
-    public static void addRoutes(Javalin app, ConnectionPool connectionPool)
-    {
+    public static void addRoutes(Javalin app, ConnectionPool connectionPool) {
         app.get("/", ctx -> showIndexPage(ctx, connectionPool));
         app.post("/addtobasket", ctx -> addToBasket(ctx, connectionPool));
         app.get("/basketpage", ctx -> showBasketPage(ctx, connectionPool));
@@ -34,8 +32,7 @@ public class OrderController
         app.post("/payorder", ctx -> payOrder(ctx, connectionPool));
     }
 
-    private static void payOrder(Context ctx, ConnectionPool connectionPool)
-    {
+    private static void payOrder(Context ctx, ConnectionPool connectionPool) {
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
 
@@ -45,7 +42,7 @@ public class OrderController
             return;
         }
         try {
-            if(currentUser.pay(currentOrder.getOrderPrice())){
+            if (currentUser.pay(currentOrder.getOrderPrice())) {
                 UserMapper.updateBalance(currentUser, connectionPool);
                 OrderMapper.setOrderStatus(currentOrder.getOrderId(), connectionPool);
                 ctx.attribute("message", "Order paid");
@@ -60,8 +57,7 @@ public class OrderController
         }
     }
 
-    public static void showIndexPage(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void showIndexPage(Context ctx, ConnectionPool connectionPool) {
         try {
             List<Bottom> bottomsList = OrderMapper.getAllBottoms(connectionPool);
             List<Topping> toppingsList = OrderMapper.getAllToppings(connectionPool);
@@ -74,8 +70,7 @@ public class OrderController
         }
     }
 
-    public static void showBasketPage(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void showBasketPage(Context ctx, ConnectionPool connectionPool) {
         Order currentOrder = ctx.sessionAttribute("currentOrder");
         if (currentOrder == null) {
             ctx.attribute("message", "Basket is empty");
@@ -98,8 +93,7 @@ public class OrderController
         }
     }
 
-    public static void showOrdersPage(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void showOrdersPage(Context ctx, ConnectionPool connectionPool) {
         User currentUser = ctx.sessionAttribute("currentUser");
         if (currentUser == null) {
             ctx.attribute("message", "Please login to view orders");
@@ -112,8 +106,7 @@ public class OrderController
 
     }
 
-    public static void getOrdersByUser(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void getOrdersByUser(Context ctx, ConnectionPool connectionPool) {
         User currentUser = ctx.sessionAttribute("currentUser");
         try {
             List<Order> ordersList = OrderMapper.getOrdersByUserId(currentUser, connectionPool);
@@ -126,12 +119,10 @@ public class OrderController
         }
     }
 
-    public static void getAllOrders(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void getAllOrders(Context ctx, ConnectionPool connectionPool) {
         User currentUser = ctx.sessionAttribute("currentUser");
         try {
             List<Order> ordersList = OrderMapper.getAllOrders(connectionPool);
-            System.out.println(ordersList);
             ctx.attribute("ordersList", ordersList);
             ctx.attribute("currentUser", currentUser);
             ctx.render("orders.html");
@@ -141,8 +132,7 @@ public class OrderController
         }
     }
 
-    public static void addToBasket(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void addToBasket(Context ctx, ConnectionPool connectionPool) {
 
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
@@ -173,9 +163,7 @@ public class OrderController
         }
     }
 
-
-    public static void getUserBasket(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void getUserBasket(Context ctx, ConnectionPool connectionPool) {
         User currentUser = ctx.sessionAttribute("currentUser");
         Order currentOrder = ctx.sessionAttribute("currentOrder");
 
@@ -203,8 +191,7 @@ public class OrderController
         }
     }
 
-    public static void deleteOrder(Context ctx, ConnectionPool connectionPool)
-    {
+    public static void deleteOrder(Context ctx, ConnectionPool connectionPool) {
         int orderId = Integer.parseInt(ctx.formParam("order_id"));
         try {
             OrderMapper.deleteOrder(orderId, connectionPool);

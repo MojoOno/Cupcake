@@ -36,8 +36,7 @@ public class Order {
         return orderPrice;
     }
 
-    public void setProductLineList(List<ProductLine> productLineList)
-    {
+    public void setProductLineList(List<ProductLine> productLineList) {
         this.productLineList = productLineList;
     }
 }

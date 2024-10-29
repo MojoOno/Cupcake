@@ -18,47 +18,69 @@ header img {
     background-color: mediumpurple;
 }
 
-/* Additional styles for .topmenu and .mid-menu */
+/* Styles for top navigation menu */
 .topmenu {
-    background-color: #f0f0f0; /* Lys grå baggrund */
+    background-color: #f0f0f0; /* Light gray background */
     overflow: hidden;
     font-size: 14px; /* Small text size */
     display: flex;
-    justify-content: space-between; /* Links til venstre, kurv til højre */
+    justify-content: space-between; /* Links on the left, cart on the right */
     align-items: center;
-    padding: 0 20px; /* Lidt indvendig afstand */
+    padding: 0 20px; /* Padding around links */
+}
+
+/* Left-aligned links in the top menu */
+.topmenu .left-menu {
+    display: flex;
+    gap: 20px;
 }
 
 .topmenu a {
     display: inline-block;
-    padding: 14px 20px; /* Afstand omkring links */
+    padding: 14px 20px; /* Spacing around links */
     text-decoration: none;
-    color: #666; /* Let grå tekstfarve */
+    color: #666; /* Light gray text color */
     text-align: center;
 }
 
+/* Right-aligned menu with Logout, user info, and cart */
+.topmenu .right-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.topmenu .right-menu a {
+    text-decoration: none;
+    color: #666; /* Matching text color */
+    font-weight: bold;
+}
+
 .topmenu .kurv {
-    margin-left: auto; /* Sørger for at kurven kommer helt til højre */
+    margin-left: auto; /* Ensures the cart icon stays on the far right */
     color: #090505;
     display: flex;
-    align-items: center; /* Justerer ikon og tekst vertikalt */
+    align-items: center; /* Aligns icon and text vertically */
 }
 
+/* Cart icon styling */
 .topmenu .kurv i {
-    font-size: 24px; /* Størrelsen på kurv-ikonet */
-    margin-right: 8px; /* Afstand mellem ikon og tekst */
+    font-size: 24px; /* Size of cart icon */
+    margin-right: 8px; /* Space between icon and text */
 }
 
+/* Hover and active styles for links */
 .topmenu a:hover {
-    background-color: #ddd; /* Lys grå baggrund på hover */
-    color: black; /* Tekstfarve på hover */
+    background-color: #ddd; /* Light gray background on hover */
+    color: black; /* Text color on hover */
 }
 
 .topmenu a.active {
-    background-color: #4CAF50; /* Aktivt link baggrundsfarve */
-    color: white; /* Aktivt link tekstfarve */
+    background-color: #4CAF50; /* Active link background color */
+    color: white; /* Active link text color */
 }
 
+/* Mid-menu styling */
 .mid-menu {
     background-color: #f0f0f0;
     padding: 0 5px 0 5px;
@@ -80,6 +102,7 @@ header img {
     justify-content: flex-end;
 }
 
+/* Button styling */
 .mid-menu button[type=submit] {
     width: 20%;
     background-color: #4CAF50;
@@ -91,6 +114,7 @@ header img {
     cursor: pointer;
 }
 
+/* Additional button styles */
 .delete-btn {
     background-color: #e74c3c;
     color: white;

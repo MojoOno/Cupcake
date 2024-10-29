@@ -1,7 +1,7 @@
 package app.entities;
 
 public class User {
-   private int userId;
+    private int userId;
     private String username;
     private String password;
     private float balance;
@@ -30,12 +30,13 @@ public class User {
     public boolean isAdmin() {
         return isAdmin;
     }
+
     public float getBalance() {
         return balance;
     }
 
     public boolean pay(float amount) {
-        if(balance >= amount) {
+        if (balance >= amount) {
             balance -= amount;
             return true;
         } else {
