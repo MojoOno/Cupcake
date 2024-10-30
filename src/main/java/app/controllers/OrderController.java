@@ -62,7 +62,7 @@ public class OrderController {
             ProductLine productLine = new ProductLine(cupcake, quantity);
             productLine = OrderMapper.addToBasket(currentUser, currentOrder, productLine, connectionPool);
             ctx.attribute("message", "Cupcake added to basket");
-            ctx.render("index.html");
+            showIndexPage(ctx, connectionPool);
         } catch (DatabaseException e) {
             ctx.attribute("message", "Something went wrong, Try again" + e.getMessage());
             ctx.render("index.html");
